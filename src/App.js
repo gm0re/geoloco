@@ -1,27 +1,19 @@
+import React, { useState } from 'react'
 import {
   GoogleMap,
-  StreetViewPanorama,
   LoadScript,
   Marker,
   Polyline
 } from '@react-google-maps/api'
-import { useState } from 'react'
 import styled, { createGlobalStyle } from 'styled-components'
 
+import { StreetView } from './components/StreetView'
+import useUserPosition from './hooks/useUserPosition'
 import useStreetView from './hooks/useStreetView'
 
-const containerStyle = {
+const mapContainerStyle = {
   width: '100%',
   height: '800px'
-}
-
-const initialPosition = {
-  lat: -3.745,
-  lng: -38.523
-}
-
-const onPolylineLoad = polyline => {
-  console.log('polyline: ', polyline)
 }
 
 const initPolylineOptions = {
@@ -36,10 +28,10 @@ const initPolylineOptions = {
   visible: true,
   radius: 30000,
   paths: [
-    {lat: 37.772, lng: -122.214},
-    {lat: 21.291, lng: -157.821},
-    {lat: -18.142, lng: 178.431},
-    {lat: -27.467, lng: 153.027}
+    { lat: 37.772, lng: -122.214 },
+    { lat: 21.291, lng: -157.821 },
+    { lat: -18.142, lng: 178.431 },
+    { lat: -27.467, lng: 153.027 }
   ],
   zIndex: 1
 }
@@ -59,22 +51,13 @@ const Wrapper = styled.div`
 `
 
 const App = () => {
-  const [movements, setMovements] = useState(0)
-  const [position, setPosition] = useState(initialPosition)
-  const [streetViewPanorama, onLoadStreetView] = useStreetView()
   const [marker, setMarker] = useState()
   const [distanceLine, setDistanceLine] = useState(initPolylineOptions)
+  const [streetViewPanorama, onStreetViewPanoramaLoad] = useStreetView()
+  const [userPosition, setUserNewPosition] = useUserPosition(streetViewPanorama)
 
-  const onPositionChanged = () => {
-    setMovements(movements + 1)
-
-    console.log('movements', movements)
-    console.log('position', position)
-
-    setPosition({
-      lat: streetViewPanorama ? streetViewPanorama.position.lat() : initialPosition,
-      lng: streetViewPanorama ? streetViewPanorama.position.lng() : initialPosition
-    })
+  const onPolylineLoad = (polyline) => {
+    console.log('polyline: ', polyline)
   }
 
   const onMapClick = (cursor) => {
@@ -87,7 +70,7 @@ const App = () => {
     setDistanceLine({
       ...distanceLine,
       paths: [
-        initialPosition,
+        userPosition,
         {
           lat: cursor.latLng.lat(),
           lng: cursor.latLng.lng(),
@@ -102,31 +85,32 @@ const App = () => {
       <GlobalStyle />
       <Wrapper>
         <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_KEY}>
-          <GoogleMap mapContainerStyle={containerStyle}>
-            <StreetViewPanorama
-              position={initialPosition}
-              visible={true}
-              onPositionChanged={onPositionChanged}
-              onLoad={onLoadStreetView}
-            />
-          </GoogleMap>
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            zoom={12}
-            center={initialPosition}
-            onClick={onMapClick}
-          >
-            {marker && (
-              <>
-                <Marker position={marker} />
-                <Polyline
-                  onLoad={onPolylineLoad}
-                  path={distanceLine.paths}
-                  options={distanceLine}
-                />
-              </>
-            )}
-          </GoogleMap>
+          {userPosition && (
+            <>
+              <StreetView
+                userPosition={userPosition}
+                setUserNewPosition={setUserNewPosition}
+                onStreetViewPanoramaLoad={onStreetViewPanoramaLoad}
+              />
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                zoom={12}
+                center={userPosition}
+                onClick={onMapClick}
+              >
+                {marker && (
+                  <>
+                    <Marker position={marker} />
+                    <Polyline
+                      onLoad={onPolylineLoad}
+                      path={distanceLine.paths}
+                      options={distanceLine}
+                    />
+                  </>
+                )}
+              </GoogleMap>
+            </>
+          )}
         </LoadScript>
       </Wrapper>
     </>

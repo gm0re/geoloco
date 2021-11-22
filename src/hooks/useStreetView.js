@@ -3,14 +3,14 @@ import { useState } from 'react'
 const useStreetView = () => {
   const [streetViewPanorama, setStreetViewPanorama] = useState()
 
-  const onStreetViewLoad = (streetViewPanorama) => {
-    console.log('onLoad', streetViewPanorama)
-    setStreetViewPanorama(streetViewPanorama)
+  const onStreetViewPanoramaLoad = (streetViewPanoramaInit) => {
+    console.log('street view onLoad', streetViewPanoramaInit)
+    setStreetViewPanorama(streetViewPanoramaInit)
   }
 
   return [
     streetViewPanorama,
-    onStreetViewLoad
+    onStreetViewPanoramaLoad
   ]
 }
 
