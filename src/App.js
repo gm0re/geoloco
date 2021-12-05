@@ -1,120 +1,128 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   GoogleMap,
-  LoadScript,
   Marker,
-  Polyline
+  Polygon,
+  StreetViewPanorama,
+  StreetViewService,
+  useJsApiLoader
 } from '@react-google-maps/api'
-import styled, { createGlobalStyle } from 'styled-components'
 
-import { StreetView } from './components/StreetView'
-import useUserPosition from './hooks/useUserPosition'
-import useStreetView from './hooks/useStreetView'
+import areas from './constants/areas'
+import usePosition from './hooks/usePosition'
+import useStreetViewSvc from './hooks/useStreetViewSvc'
 
 const mapContainerStyle = {
   width: '100%',
   height: '800px'
 }
 
-const initPolylineOptions = {
-  strokeColor: '#FF0000',
-  strokeOpacity: 0.8,
-  strokeWeight: 2,
-  fillColor: '#FF0000',
-  fillOpacity: 0.35,
-  clickable: false,
-  draggable: false,
-  editable: false,
-  visible: true,
-  radius: 30000,
-  paths: [
-    { lat: 37.772, lng: -122.214 },
-    { lat: 21.291, lng: -157.821 },
-    { lat: -18.142, lng: 178.431 },
-    { lat: -27.467, lng: 153.027 }
-  ],
-  zIndex: 1
+const App = () => {
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
+    libraries: ['geometry']
+  })
+  const [google, setGoogle] = useState(window.google)
+  const [map, setMap] = useState()
+  const [markers, setMarkers] = useState([])
+  const [polygon, setPolygon] = useState()
+  const [site, setSite] = useState()
+  const [streetViewPanorama, setStreetViewPanorama] = useState()
+  const [position, setRandomPosition] = usePosition()
+  const [
+    streetViewSvc,
+    setStreetViewSvc,
+    streetViewPosition,
+    setNewStreetViewPosition
+  ] = useStreetViewSvc()
+
+  useEffect(() => {
+    setSite(areas[Math.floor(Math.random() * areas.length)])
+  }, [])
+
+  useEffect(() => {
+    if (position && streetViewSvc) {
+      // setNewStreetViewPosition(setNewStreetViewPosition(site))
+      setNewStreetViewPosition(position)
+    }
+  }, [position, streetViewSvc])
+
+  useEffect(() => {
+    setGoogle(window.google)
+
+    if (google && polygon) {
+      setRandomPosition(google, polygon)
+    }
+  }, [google, map])
+
+  // debugging position found on map with marker
+  useEffect(() => {
+    if (position) {
+      setMarkers((oldMarkers) => [
+        ...oldMarkers,
+        { lat: position.lat, lng: position.lng }
+      ])
+    }
+  }, [position])
+
+  const renderMap = () => {
+    const onGoogleMapLoad = (newMap) => {
+      console.log('map', newMap)
+      setMap(newMap)
+    }
+
+    const onPolygonLoad = (newPolygon) => {
+      console.log('poly', newPolygon)
+      setPolygon(newPolygon)
+    }
+
+    const onStreetViewServicesLoad = (streetViewServiceInstance) => {
+      console.log('streetViewServiceInstance', streetViewServiceInstance)
+      setStreetViewSvc(streetViewServiceInstance)
+    }
+
+    const onStreetViewPanoramaLoad = (streetViewPanoramaInstance) => {
+      console.log('streetViewPanoramaInstance', streetViewPanoramaInstance)
+      setStreetViewPanorama(streetViewPanoramaInstance)
+    }
+
+    return (
+      <>
+        <StreetViewService onLoad={onStreetViewServicesLoad} />
+        <GoogleMap mapContainerStyle={mapContainerStyle}>
+          <StreetViewPanorama
+            position={streetViewPosition}
+            onStreetViewPanoramaLoad={onStreetViewPanoramaLoad}
+            visible
+          />
+        </GoogleMap>
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          onLoad={onGoogleMapLoad}
+          zoom={12}
+          center={position}
+        >
+          <Polygon
+            onLoad={onPolygonLoad}
+            paths={site}
+          />
+          {markers.map((marker, key) => {
+            console.log('m', marker)
+            return (
+              // eslint-disable-next-line
+              <Marker position={marker} key={`marker-${key}`} />
+            )
+          })}
+        </GoogleMap>
+      </>
+    )
+  }
+
+  if (loadError) {
+    return <div>Todo roto</div>
+  }
+
+  return isLoaded && renderMap()
 }
 
-const GlobalStyle = createGlobalStyle`
-  html, body {
-    background-color: black;
-    padding: 0;
-    margin: 0;
-  }
-`
-
-const Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 8px;
-`
-
-const App = () => {
-  const [marker, setMarker] = useState()
-  const [distanceLine, setDistanceLine] = useState(initPolylineOptions)
-  const [streetViewPanorama, onStreetViewPanoramaLoad] = useStreetView()
-  const [userPosition, setUserNewPosition] = useUserPosition(streetViewPanorama)
-
-  const onPolylineLoad = (polyline) => {
-    console.log('polyline: ', polyline)
-  }
-
-  const onMapClick = (cursor) => {
-    console.log(cursor)
-    setMarker({
-      lat: cursor.latLng.lat(),
-      lng: cursor.latLng.lng(),
-    })
-
-    setDistanceLine({
-      ...distanceLine,
-      paths: [
-        userPosition,
-        {
-          lat: cursor.latLng.lat(),
-          lng: cursor.latLng.lng(),
-        }
-      ]
-    })
-    console.log('dline', distanceLine)
-  }
-
-  return (
-    <>
-      <GlobalStyle />
-      <Wrapper>
-        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_KEY}>
-          {userPosition && (
-            <>
-              <StreetView
-                userPosition={userPosition}
-                setUserNewPosition={setUserNewPosition}
-                onStreetViewPanoramaLoad={onStreetViewPanoramaLoad}
-              />
-              <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                zoom={12}
-                center={userPosition}
-                onClick={onMapClick}
-              >
-                {marker && (
-                  <>
-                    <Marker position={marker} />
-                    <Polyline
-                      onLoad={onPolylineLoad}
-                      path={distanceLine.paths}
-                      options={distanceLine}
-                    />
-                  </>
-                )}
-              </GoogleMap>
-            </>
-          )}
-        </LoadScript>
-      </Wrapper>
-    </>
-  )
-};
-
-export default App;
+export default App
