@@ -23,6 +23,7 @@ const GeoLoco = ({ google }) => {
   const [polygon, setPolygon] = useState()
   const [site, setSite] = useState()
   const [, setStreetViewPanorama] = useState()
+  const [distanceFromGuessed, setDistanceFromGuessed] = useState()
   const [position, setRandomPosition] = usePosition()
   const [
     ,
@@ -47,6 +48,10 @@ const GeoLoco = ({ google }) => {
     }
   }, [position])
 
+  const calculateDistance = (pointA, pointB) => (
+    google.maps.geometry.spherical.computeDistanceBetween(pointA, pointB)
+  )
+
   const onMapClick = (event) => {
     console.log('click', event)
     const newGuessMarker = {
@@ -54,6 +59,7 @@ const GeoLoco = ({ google }) => {
       lng: event.latLng.lng()
     }
     setGuessMarker(newGuessMarker)
+    setDistanceFromGuessed(calculateDistance(event.latLng, new google.maps.LatLng(position)))
   }
 
   const onMapLoad = (newMap) => {
@@ -113,7 +119,16 @@ const GeoLoco = ({ google }) => {
 }
 
 GeoLoco.propTypes = {
-  google: PropTypes.shape({}).isRequired
+  google: PropTypes.shape({
+    maps: PropTypes.shape({
+      geometry: PropTypes.shape({
+        spherical: PropTypes.shape({
+          computeDistanceBetween: PropTypes.func,
+        })
+      }),
+      LatLng: PropTypes.func
+    })
+  }).isRequired
 }
 
 export default GeoLoco
