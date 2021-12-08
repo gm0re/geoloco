@@ -1,30 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import { useJsApiLoader } from '@react-google-maps/api'
+import React from 'react'
+import {
+  Routes,
+  Route
+} from 'react-router-dom';
 
-import GeoLoco from './components/GeoLoco'
+import Home from './components/Home'
+import GeoLocoInit from './components/GeoLocoInit'
 
-const App = () => {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
-    libraries: ['geometry']
-  })
-  const [google, setGoogle] = useState()
-
-  useEffect(() => {
-    setGoogle(window.google)
-  }, [isLoaded])
-
-  if (loadError) {
-    return (
-      <div>Todo roto {loadError}</div>
-    )
-  }
-
-  return (isLoaded && google) ? (
-    <GeoLoco google={google} />
-  ) : (
-    <div>Loading...</div>
-  )
-}
+const App = () => (
+  <Routes>
+    <Route path="/" element={<Home />}>
+      <Route path="geoloco" element={<GeoLocoInit />} />
+    </Route>
+  </Routes>
+)
 
 export default App
