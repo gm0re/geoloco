@@ -1,14 +1,33 @@
 import React from 'react'
+import styled from 'styled-components'
+import { Button, Typography } from 'antd'
+
+const { Title } = Typography
+
+const ContentWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`
 
 const GeoLocoTitle = () => (
-  <h1>GeoLoco 🌎</h1>
+  <Title>GeoLoco 🌎</Title>
 )
 
 const Home = () => (
-  <div>
-    <GeoLocoTitle />
-    <button type="button">Play!</button>
-  </div>
+  <ContentWrapper>
+    <div>
+      <GeoLocoTitle />
+      <ButtonWrapper>
+        <Button>Play!</Button>
+      </ButtonWrapper>
+    </div>
+  </ContentWrapper>
 )
 
 export default Home
