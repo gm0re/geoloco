@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Button, Typography } from 'antd'
+import { Anchor, Typography } from 'antd'
 
+const { Link } = Anchor
 const { Title } = Typography
 
 const ContentWrapper = styled.div`
@@ -24,7 +25,9 @@ const Home = () => (
     <div>
       <GeoLocoTitle />
       <ButtonWrapper>
-        <Button>Play!</Button>
+        <Anchor affix={false}>
+          <Link href="/map" title="Play!" />
+        </Anchor>
       </ButtonWrapper>
     </div>
   </ContentWrapper>
