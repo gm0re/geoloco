@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import styled from 'styled-components'
 import {
   GoogleMap,
   Marker,
@@ -7,6 +8,7 @@ import {
   StreetViewPanorama,
   StreetViewService
 } from '@react-google-maps/api'
+import { Button, BackTop } from 'antd'
 
 import areas from '../constants/areas'
 import usePosition from '../hooks/usePosition'
@@ -16,6 +18,49 @@ const mapContainerStyle = {
   width: '100%',
   height: '800px'
 }
+
+const Page = styled.div`
+  height: 1640px;
+`
+
+const StreetViewWrapper = styled.div`
+  position: relative;
+`
+
+const GuessButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+`
+
+const GuessButton = styled(Button)`
+  width: 800px;
+`
+
+const GameRoundsPanel = styled.div`
+  width: 250px;
+  height: 100px;
+  background-color: white;
+  margin: 16px;
+  color: white;
+  position: absolute;
+  right: 0;
+  z-index: 100;
+  border: 1px #d9d9d9 solid;
+  box-shadow: 0 2px 0 rgb(0 0 0 / 2%)
+`
+
+const GoUpButton = styled.div`
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  border-radius: 4px;
+  background-color: #1088e9;
+  color: #fff;
+  text-align: center;
+  font-size: 14;
+  z-index: 1000;
+`
 
 const GeoLoco = ({ google }) => {
   const [, setMap] = useState()
@@ -82,24 +127,36 @@ const GeoLoco = ({ google }) => {
     setStreetViewPanorama(streetViewPanoramaInstance)
   }
 
+  const onGuessButtonClick = () => {
+    console.log('Guess!')
+  }
+
   return (
-    <div>
+    <Page>
       {google && (
         <>
           <StreetViewService onLoad={onStreetViewServicesLoad} />
-          <GoogleMap mapContainerStyle={mapContainerStyle}>
-            <StreetViewPanorama
-              position={streetViewPosition}
-              onStreetViewPanoramaLoad={onStreetViewPanoramaLoad}
-              options={{
-                addressControl: false,
-                showRoadLabels: false,
-                zoomControl: true,
-                fullscreenControl: false
-              }}
-              visible
-            />
-          </GoogleMap>
+          <StreetViewWrapper>
+            <GameRoundsPanel />
+            <GoogleMap mapContainerStyle={mapContainerStyle}>
+              <StreetViewPanorama
+                position={streetViewPosition}
+                onStreetViewPanoramaLoad={onStreetViewPanoramaLoad}
+                options={{
+                  addressControl: false,
+                  showRoadLabels: false,
+                  zoomControl: true,
+                  fullscreenControl: false
+                }}
+                visible
+              />
+            </GoogleMap>
+          </StreetViewWrapper>
+          <GuessButtonWrapper>
+            <GuessButton size="large" onClick={onGuessButtonClick}>
+              Guess!
+            </GuessButton>
+          </GuessButtonWrapper>
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             zoom={12}
@@ -126,7 +183,10 @@ const GeoLoco = ({ google }) => {
           </GoogleMap>
         </>
       )}
-    </div>
+      <BackTop>
+        <GoUpButton>Up!</GoUpButton>
+      </BackTop>
+    </Page>
   )
 }
 
