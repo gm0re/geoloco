@@ -22,16 +22,15 @@ const StyledContent = styled(Content)`
 
 const App = () => (
   <Layout>
-    <Menu mode="horizontal" defaultSelectedKeys={['menu']}>
+    {/* <Menu mode="horizontal" defaultSelectedKeys={['menu']}>
       <Item key="menu">
         <Link to="/">Home</Link>
       </Item>
-    </Menu>
+    </Menu> */}
     <StyledContent>
       <Routes>
-        <Route path="/" element={<Home />}>
-          <Route path="geoloco" element={<GeoLocoInit />} />
-        </Route>
+        {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/" element={<GeoLocoInit />} />
       </Routes>
     </StyledContent>
   </Layout>
