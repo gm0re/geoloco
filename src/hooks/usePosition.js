@@ -31,8 +31,8 @@ const getNewRandomCoordsInPoly = (google, polygon, ne, sw, maxTries = 10) => {
   return { lat: 0, lng: 0 }
 }
 
-const usePosition = (initPosition) => {
-  const [position, setPosition] = useState(initPosition)
+const usePosition = () => {
+  const [position, setPosition] = useState()
 
   const setRandomPosition = (google, polygon) => {
     const bounds = new google.maps.LatLngBounds();
