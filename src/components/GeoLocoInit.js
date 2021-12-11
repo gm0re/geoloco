@@ -5,7 +5,7 @@ import GeoLoco from './GeoLoco'
 
 const GeoLocoInit = () => {
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_GeoLocoInit_GOOGLE_MAPS_KEY,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['geometry']
   })
   const [google, setGoogle] = useState()
