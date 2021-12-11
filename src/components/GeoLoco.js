@@ -91,6 +91,12 @@ const GeoLoco = ({ google }) => {
             <StreetViewPanorama
               position={streetViewPosition}
               onStreetViewPanoramaLoad={onStreetViewPanoramaLoad}
+              options={{
+                addressControl: false,
+                showRoadLabels: false,
+                zoomControl: true,
+                fullscreenControl: false
+              }}
               visible
             />
           </GoogleMap>
@@ -100,6 +106,12 @@ const GeoLoco = ({ google }) => {
             center={position}
             onLoad={onMapLoad}
             onClick={onMapClick}
+            options={{
+              fullscreenControl: false,
+              keyboardShortcuts: false,
+              mapTypeControl: false,
+              streetViewControl: false
+            }}
           >
             <Polygon
               onLoad={onPolygonLoad}
