@@ -79,8 +79,9 @@ const GuessMap = ({
         }}
       >
         <Polygon
-          onLoad={onPolygonLoad}
+          options={{ clickable: false }}
           paths={site}
+          onLoad={onPolygonLoad}
         />
         {position && (
           <Marker position={position} />
