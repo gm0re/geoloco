@@ -28,7 +28,7 @@ const Street = ({
           options={{
             addressControl: false,
             showRoadLabels: false,
-            zoomControl: true,
+            zoomControl: false,
             fullscreenControl: false
           }}
           visible
