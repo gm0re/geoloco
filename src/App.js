@@ -25,8 +25,8 @@ const App = () => (
   <Layout>
     <StyledContent>
       <Routes>
-        {/* <Route path="/" element={<Home />} /> */}
-        <Route path="/" element={<GeoLocoInit />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/geoloco" element={<GeoLocoInit />} />
         <Route path="/results" element={<GuessResults />} />
       </Routes>
     </StyledContent>

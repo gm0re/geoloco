@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { StreetViewService } from '@react-google-maps/api'
-import { Button, BackTop } from 'antd'
+import { BackTop, Modal } from 'antd'
 
 import Street from './Street'
 import GuessMap from './GuessMap'
@@ -19,16 +19,6 @@ const Page = styled.div`
   height: 1640px;
 `
 
-const GuessButtonWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  padding: 8px;
-`
-
-const GuessButton = styled(Button)`
-  width: 800px;
-`
-
 const GoUpButton = styled.div`
   height: 40px;
   width: 40px;
@@ -42,6 +32,8 @@ const GoUpButton = styled.div`
 `
 
 const GeoLoco = ({ google }) => {
+  const [game, setGame] = useState()
+  const [roundOver, setRoundOver] = useState(false)
   const [polygon, setPolygon] = useState()
   const [position, setRandomPosition] = usePosition()
   const [
@@ -73,6 +65,10 @@ const GeoLoco = ({ google }) => {
     }
   }, [position])
 
+  useEffect(() => {
+    setGame({ round: 1, score: 0, maxRounds: 3 })
+  }, [])
+
   return (
     <Page>
       {google && (
@@ -82,27 +78,24 @@ const GeoLoco = ({ google }) => {
             <Street
               mapContainerStyle={mapContainerStyle}
               streetViewPosition={streetViewPosition}
+              game={game}
             />
           )}
-          <GuessButtonWrapper>
-            <GuessButton
-              size="large"
-              href="/results"
-            >
-              Guess!
-            </GuessButton>
-          </GuessButtonWrapper>
           <GuessMap
             google={google}
             mapContainerStyle={mapContainerStyle}
             onPolygonLoad={onPolygonLoad}
             position={position}
+            setRoundOver={setRoundOver}
           />
         </>
       )}
       <BackTop>
         <GoUpButton>Up!</GoUpButton>
       </BackTop>
+      <Modal visible={roundOver}>
+        Modal
+      </Modal>
     </Page>
   )
 }

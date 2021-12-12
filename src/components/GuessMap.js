@@ -5,17 +5,30 @@ import {
   Marker,
   Polygon
 } from '@react-google-maps/api'
+import styled from 'styled-components'
+import { Button } from 'antd'
 
 import areas from '../constants/areas'
+
+const GuessButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+`
+
+const GuessButton = styled(Button)`
+  width: 800px;
+`
 
 const GuessMap = ({
   google,
   mapContainerStyle,
   position,
-  onPolygonLoad
+  onPolygonLoad,
+  setRoundOver
 }) => {
   const [site, setSite] = useState()
-  const [guessMarker, setGuessMarker] = useState([])
+  const [guessMarker, setGuessMarker] = useState()
   const [, setDistanceFromGuessed] = useState()
 
   const calculateDistance = (pointA, pointB) => (
@@ -32,35 +45,51 @@ const GuessMap = ({
     setDistanceFromGuessed(calculateDistance(event.latLng, new google.maps.LatLng(position)))
   }
 
+  const onGuessButtonClick = () => {
+    console.log('end round')
+    setRoundOver(true)
+  }
+
   useEffect(() => {
     setSite(areas[Math.floor(Math.random() * areas.length)])
   }, [])
 
   return (
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      zoom={12}
-      center={position}
-      onClick={onMapClick}
-      options={{
-        fullscreenControl: false,
-        keyboardShortcuts: false,
-        mapTypeControl: false,
-        streetViewControl: false,
-        zoomControl: false
-      }}
-    >
-      <Polygon
-        onLoad={onPolygonLoad}
-        paths={site}
-      />
-      {position && (
-        <Marker position={position} />
-      )}
-      {guessMarker && (
-        <Marker position={guessMarker} />
-      )}
-    </GoogleMap>
+    <div>
+      <GuessButtonWrapper>
+        <GuessButton
+          size="large"
+          onClick={onGuessButtonClick}
+          disabled={!guessMarker}
+        >
+          Guess!
+        </GuessButton>
+      </GuessButtonWrapper>
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        zoom={12}
+        center={position}
+        onClick={onMapClick}
+        options={{
+          fullscreenControl: false,
+          keyboardShortcuts: false,
+          mapTypeControl: false,
+          streetViewControl: false,
+          zoomControl: false
+        }}
+      >
+        <Polygon
+          onLoad={onPolygonLoad}
+          paths={site}
+        />
+        {position && (
+          <Marker position={position} />
+        )}
+        {guessMarker && (
+          <Marker position={guessMarker} />
+        )}
+      </GoogleMap>
+    </div>
   )
 }
 
@@ -77,7 +106,8 @@ GuessMap.propTypes = {
   }).isRequired,
   mapContainerStyle: PropTypes.shape({}).isRequired,
   position: PropTypes.shape({}),
-  onPolygonLoad: PropTypes.func.isRequired
+  onPolygonLoad: PropTypes.func.isRequired,
+  setRoundOver: PropTypes.func.isRequired
 }
 
 GuessMap.defaultProps = {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import {
@@ -6,32 +6,22 @@ import {
   StreetViewPanorama
 } from '@react-google-maps/api'
 
+import GameRoundsPanel from './GameRoundsPanel'
+
 const StreetViewWrapper = styled.div`
   position: relative;
-`
-
-const GameRoundsPanel = styled.div`
-  width: 250px;
-  height: 100px;
-  background-color: white;
-  margin: 16px;
-  color: white;
-  position: absolute;
-  right: 0;
-  z-index: 100;
-  border: 1px #d9d9d9 solid;
-  box-shadow: 0 2px 0 rgb(0 0 0 / 2%)
 `
 
 const Street = ({
   mapContainerStyle,
   streetViewPosition,
+  game
 }) => {
   console.log('Street')
 
   return (
     <StreetViewWrapper>
-      <GameRoundsPanel />
+      <GameRoundsPanel game={game} />
       <GoogleMap mapContainerStyle={mapContainerStyle}>
         <StreetViewPanorama
           position={streetViewPosition}
@@ -50,7 +40,8 @@ const Street = ({
 
 Street.propTypes = {
   mapContainerStyle: PropTypes.shape({}).isRequired,
-  streetViewPosition: PropTypes.shape({}).isRequired
+  streetViewPosition: PropTypes.shape({}).isRequired,
+  game: PropTypes.shape({}).isRequired
 }
 
 export default Street
