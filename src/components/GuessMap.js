@@ -46,7 +46,8 @@ const GuessMap = ({
         fullscreenControl: false,
         keyboardShortcuts: false,
         mapTypeControl: false,
-        streetViewControl: false
+        streetViewControl: false,
+        zoomControl: false
       }}
     >
       <Polygon
