@@ -153,7 +153,11 @@ const GeoLoco = ({ google }) => {
             </GoogleMap>
           </StreetViewWrapper>
           <GuessButtonWrapper>
-            <GuessButton size="large" onClick={onGuessButtonClick}>
+            <GuessButton
+              size="large"
+              href="/results"
+              onClick={onGuessButtonClick}
+            >
               Guess!
             </GuessButton>
           </GuessButtonWrapper>

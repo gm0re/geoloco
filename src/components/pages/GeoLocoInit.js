@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useJsApiLoader } from '@react-google-maps/api'
 
-import GeoLoco from './GeoLoco'
+import GeoLoco from '../GeoLoco'
 
 const GeoLocoInit = () => {
   const { isLoaded, loadError } = useJsApiLoader({
