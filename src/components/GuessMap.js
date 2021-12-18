@@ -8,6 +8,7 @@ import {
 import styled from 'styled-components'
 import { Button } from 'antd'
 
+import gamePropTypes from './propTypes/game'
 import areas from '../constants/areas'
 
 const GuessButtonWrapper = styled.div`
@@ -25,11 +26,12 @@ const GuessMap = ({
   mapContainerStyle,
   position,
   onPolygonLoad,
-  setRoundOver
+  setRoundOver,
+  setGame
 }) => {
   const [site, setSite] = useState()
   const [guessMarker, setGuessMarker] = useState()
-  const [, setDistanceFromGuessed] = useState()
+  const [distanceFromGuessed, setDistanceFromGuessed] = useState()
 
   const calculateDistance = (pointA, pointB) => (
     google.maps.geometry.spherical.computeDistanceBetween(pointA, pointB)
@@ -46,7 +48,18 @@ const GuessMap = ({
   }
 
   const onGuessButtonClick = () => {
-    console.log('end round')
+    const newGame = (game) => {
+      console.log('check')
+      // eslint-disable-next-line
+      game.rounds[game.rounds.length - 1].distance = distanceFromGuessed
+      return {
+        ...game,
+        rounds: [
+          ...game.rounds,
+        ]
+      }
+    }
+    setGame(newGame)
     setRoundOver(true)
   }
 
@@ -108,7 +121,8 @@ GuessMap.propTypes = {
   mapContainerStyle: PropTypes.shape({}).isRequired,
   position: PropTypes.shape({}),
   onPolygonLoad: PropTypes.func.isRequired,
-  setRoundOver: PropTypes.func.isRequired
+  setRoundOver: PropTypes.func.isRequired,
+  setGame: PropTypes.func.isRequired
 }
 
 GuessMap.defaultProps = {
