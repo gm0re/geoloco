@@ -2,13 +2,18 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { StreetViewService } from '@react-google-maps/api'
-import { BackTop, Modal } from 'antd'
+import { BackTop, Button, Modal } from 'antd'
 
+import GAME_INIT from '../constants/game'
 import Street from './Street'
 import GuessMap from './GuessMap'
-
+import RoundResults from './RoundResults'
 import usePosition from '../hooks/usePosition'
 import useStreetViewSvc from '../hooks/useStreetViewSvc'
+
+const NEXT_ROUND_TEXT = 'Play next round'
+const GAME_OVER_TEXT = 'See results'
+const GO_UP = 'Up!'
 
 const mapContainerStyle = {
   width: '100%',
@@ -31,8 +36,30 @@ const GoUpButton = styled.div`
   z-index: 1000;
 `
 
+const ModalFooter = ({
+  isLastRound,
+  nextRoundText,
+  gameOverText,
+  onNextRoundClick,
+  onGameOverClick
+}) => (
+  isLastRound ? (
+    <Button onClick={onNextRoundClick}>{nextRoundText}</Button>
+  ) : (
+    <Button onClick={onGameOverClick}>{gameOverText}</Button>
+  )
+)
+
+ModalFooter.propTypes = {
+  isLastRound: PropTypes.bool.isRequired,
+  nextRoundText: PropTypes.string.isRequired,
+  gameOverText: PropTypes.string.isRequired,
+  onNextRoundClick: PropTypes.func.isRequired,
+  onGameOverClick: PropTypes.func.isRequired
+}
+
 const GeoLoco = ({ google }) => {
-  const [game, setGame] = useState()
+  const [game, setGame] = useState(GAME_INIT)
   const [roundOver, setRoundOver] = useState(false)
   const [polygon, setPolygon] = useState()
   const [position, setRandomPosition] = usePosition()
@@ -43,6 +70,8 @@ const GeoLoco = ({ google }) => {
     setNewStreetViewPosition
   ] = useStreetViewSvc()
 
+  const isLastRound = game.rounds.length - 1 === game.maxRounds
+
   const onPolygonLoad = (newPolygon) => {
     console.log('poly', newPolygon)
     setPolygon(newPolygon)
@@ -51,6 +80,14 @@ const GeoLoco = ({ google }) => {
   const onStreetViewServicesLoad = (streetViewServiceInstance) => {
     console.log('streetViewServiceInstance', streetViewServiceInstance)
     setStreetViewSvc(streetViewServiceInstance)
+  }
+
+  const onNextRoundClick = () => {
+    console.log('next round')
+  }
+
+  const onGameOverClick = () => {
+    console.log('game over')
   }
 
   useEffect(() => {
@@ -64,10 +101,6 @@ const GeoLoco = ({ google }) => {
       setNewStreetViewPosition(position)
     }
   }, [position])
-
-  useEffect(() => {
-    setGame({ round: 1, score: 0, maxRounds: 3 })
-  }, [])
 
   return (
     <Page>
@@ -87,14 +120,26 @@ const GeoLoco = ({ google }) => {
             onPolygonLoad={onPolygonLoad}
             position={position}
             setRoundOver={setRoundOver}
+            setGame={setGame}
           />
         </>
       )}
       <BackTop>
-        <GoUpButton>Up!</GoUpButton>
+        <GoUpButton>{GO_UP}</GoUpButton>
       </BackTop>
-      <Modal visible={roundOver}>
-        Modal
+      <Modal
+        visible={roundOver}
+        footer={[
+          <ModalFooter
+            isLastRound={isLastRound}
+            nextRoundText={NEXT_ROUND_TEXT}
+            gameOverText={GAME_OVER_TEXT}
+            onNextRoundClick={onNextRoundClick}
+            onGameOverClick={onGameOverClick}
+          />
+        ]}
+      >
+        <RoundResults game={game} />
       </Modal>
     </Page>
   )
