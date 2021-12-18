@@ -35,7 +35,7 @@ const GameRoundsPanel = ({ game }) => (
       <Title level={4}>Score</Title>
     </div>
     <div>
-      <Text>{game.round} / {game.maxRounds}</Text>
+      <Text>{game.rounds[game.rounds.length - 1].number} / {game.maxRounds}</Text>
       <Text>{game.score}</Text>
     </div>
   </Wrapper>
@@ -43,7 +43,9 @@ const GameRoundsPanel = ({ game }) => (
 
 GameRoundsPanel.propTypes = {
   game: PropTypes.shape({
-    round: PropTypes.number,
+    rounds: PropTypes.arrayOf(PropTypes.shape({
+      number: PropTypes.number
+    })),
     score: PropTypes.number,
     maxRounds: PropTypes.number
   }).isRequired
