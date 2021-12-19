@@ -16,27 +16,23 @@ const Street = ({
   mapContainerStyle,
   streetViewPosition,
   game
-}) => {
-  console.log('Street')
-
-  return (
-    <StreetViewWrapper>
-      <GameRoundsPanel game={game} />
-      <GoogleMap mapContainerStyle={mapContainerStyle}>
-        <StreetViewPanorama
-          position={streetViewPosition}
-          options={{
-            addressControl: false,
-            showRoadLabels: false,
-            zoomControl: false,
-            fullscreenControl: false
-          }}
-          visible
-        />
-      </GoogleMap>
-    </StreetViewWrapper>
-  )
-}
+}) => (
+  <StreetViewWrapper>
+    <GameRoundsPanel game={game} />
+    <GoogleMap mapContainerStyle={mapContainerStyle}>
+      <StreetViewPanorama
+        position={streetViewPosition}
+        options={{
+          addressControl: false,
+          showRoadLabels: false,
+          zoomControl: false,
+          fullscreenControl: false
+        }}
+        visible
+      />
+    </GoogleMap>
+  </StreetViewWrapper>
+)
 
 Street.propTypes = {
   mapContainerStyle: PropTypes.shape({}).isRequired,
