@@ -9,7 +9,6 @@ import styled from 'styled-components'
 import { Button } from 'antd'
 
 import googlePropTypes from './propTypes/google'
-import areas from '../constants/areas'
 
 const GUESS_BUTTON_TEXT = 'Guess!'
 const DEFAULT_POSITION = { lat: 0, lng: 0 }
@@ -31,11 +30,12 @@ const GuessMap = ({
   onPolygonLoad,
   setShowRoundResultsModal,
   setGame,
+  guessMarker,
   polygonKey,
-  round
+  round,
+  setGuessMarker,
+  site
 }) => {
-  const [site, setSite] = useState()
-  const [guessMarker, setGuessMarker] = useState()
   const [distanceFromGuessed, setDistanceFromGuessed] = useState()
 
   const calculateDistance = (pointA, pointB) => (
@@ -65,10 +65,6 @@ const GuessMap = ({
     setGame(newGame)
     setShowRoundResultsModal(true)
   }
-
-  useEffect(() => {
-    setSite(areas[Math.floor(Math.random() * areas.length)])
-  }, [])
 
   useEffect(() => {
     setGuessMarker()
@@ -104,9 +100,6 @@ const GuessMap = ({
           onLoad={onPolygonLoad}
           key={polygonKey}
         />
-        {position && (
-          <Marker position={position} />
-        )}
         {guessMarker && (
           <Marker position={guessMarker} />
         )}
@@ -122,12 +115,16 @@ GuessMap.propTypes = {
   onPolygonLoad: PropTypes.func.isRequired,
   setShowRoundResultsModal: PropTypes.func.isRequired,
   setGame: PropTypes.func.isRequired,
-  polygonKey: PropTypes.number.isRequired,
-  round: PropTypes.number.isRequired
+  guessMarker: PropTypes.shape({}),
+  setGuessMarker: PropTypes.func.isRequired,
+  polygonKey: PropTypes.string.isRequired,
+  round: PropTypes.number.isRequired,
+  site: PropTypes.arrayOf(PropTypes.shape({})).isRequired
 }
 
 GuessMap.defaultProps = {
-  position: DEFAULT_POSITION
+  position: DEFAULT_POSITION,
+  guessMarker: undefined
 }
 
 export default GuessMap
