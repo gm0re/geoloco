@@ -13,6 +13,7 @@ import GuessMap from './GuessMap'
 import RoundResults from './RoundResults'
 import usePosition from '../hooks/usePosition'
 import useStreetViewSvc from '../hooks/useStreetViewSvc'
+import areas from '../constants/areas'
 
 const NEXT_ROUND_TEXT = 'Play next round'
 const GAME_OVER_TEXT = 'See results'
@@ -63,6 +64,9 @@ ModalFooter.propTypes = {
 }
 
 const GeoLoco = ({ google }) => {
+  const randomAreaIndex = Math.floor(Math.random() * areas.length)
+  const [site, setSite] = useState(areas[randomAreaIndex])
+  const [guessMarker, setGuessMarker] = useState()
   const [game, setGame] = useState(GAME_INIT)
   const [showRoundsResultModal, setShowRoundResultsModal] = useState(false)
   const [polygon, setPolygon] = useState()
@@ -78,12 +82,10 @@ const GeoLoco = ({ google }) => {
   const isLastRound = game.rounds.length - 1 === game.maxRounds
 
   const onPolygonLoad = (newPolygon) => {
-    console.log('poly', newPolygon)
     setPolygon(newPolygon)
   }
 
   const onStreetViewServicesLoad = (streetViewServiceInstance) => {
-    console.log('streetViewServiceInstance', streetViewServiceInstance)
     setStreetViewSvc(streetViewServiceInstance)
   }
 
@@ -115,8 +117,8 @@ const GeoLoco = ({ google }) => {
   }, [position])
 
   useEffect(() => {
-    console.log('useeff', game)
     setPolygonKey(getNewPolyKey())
+    setSite(areas[randomAreaIndex])
   }, [game.rounds.length])
 
   return (
@@ -140,6 +142,9 @@ const GeoLoco = ({ google }) => {
             setShowRoundResultsModal={setShowRoundResultsModal}
             setGame={setGame}
             round={game.rounds.length}
+            setGuessMarker={setGuessMarker}
+            guessMarker={guessMarker}
+            site={site}
           />
         </>
       )}
@@ -148,6 +153,7 @@ const GeoLoco = ({ google }) => {
       </BackTop>
       <Modal
         visible={showRoundsResultModal}
+        width="70%"
         footer={[
           <ModalFooter
             isLastRound={isLastRound}
@@ -158,7 +164,12 @@ const GeoLoco = ({ google }) => {
           />
         ]}
       >
-        <RoundResults game={game} />
+        <RoundResults
+          round={game.rounds[game.rounds.length - 1]}
+          site={site}
+          position={position}
+          guessMarker={guessMarker}
+        />
       </Modal>
     </Page>
   )
