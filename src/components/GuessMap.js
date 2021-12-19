@@ -8,8 +8,11 @@ import {
 import styled from 'styled-components'
 import { Button } from 'antd'
 
-import gamePropTypes from './propTypes/game'
+import googlePropTypes from './propTypes/google'
 import areas from '../constants/areas'
+
+const GUESS_BUTTON_TEXT = 'Guess!'
+const DEFAULT_POSITION = { lat: 0, lng: 0 }
 
 const GuessButtonWrapper = styled.div`
   display: flex;
@@ -26,8 +29,10 @@ const GuessMap = ({
   mapContainerStyle,
   position,
   onPolygonLoad,
-  setRoundOver,
-  setGame
+  setShowRoundResultsModal,
+  setGame,
+  polygonKey,
+  round
 }) => {
   const [site, setSite] = useState()
   const [guessMarker, setGuessMarker] = useState()
@@ -38,7 +43,6 @@ const GuessMap = ({
   )
 
   const onMapClick = (event) => {
-    console.log('click', event)
     const newGuessMarker = {
       lat: event.latLng.lat(),
       lng: event.latLng.lng()
@@ -49,7 +53,6 @@ const GuessMap = ({
 
   const onGuessButtonClick = () => {
     const newGame = (game) => {
-      console.log('check')
       // eslint-disable-next-line
       game.rounds[game.rounds.length - 1].distance = distanceFromGuessed
       return {
@@ -60,12 +63,16 @@ const GuessMap = ({
       }
     }
     setGame(newGame)
-    setRoundOver(true)
+    setShowRoundResultsModal(true)
   }
 
   useEffect(() => {
     setSite(areas[Math.floor(Math.random() * areas.length)])
   }, [])
+
+  useEffect(() => {
+    setGuessMarker()
+  }, [round])
 
   return (
     <div>
@@ -75,7 +82,7 @@ const GuessMap = ({
           onClick={onGuessButtonClick}
           disabled={!guessMarker}
         >
-          Guess!
+          {GUESS_BUTTON_TEXT}
         </GuessButton>
       </GuessButtonWrapper>
       <GoogleMap
@@ -95,6 +102,7 @@ const GuessMap = ({
           options={{ clickable: false }}
           paths={site}
           onLoad={onPolygonLoad}
+          key={polygonKey}
         />
         {position && (
           <Marker position={position} />
@@ -108,25 +116,18 @@ const GuessMap = ({
 }
 
 GuessMap.propTypes = {
-  google: PropTypes.shape({
-    maps: PropTypes.shape({
-      LatLng: PropTypes.func,
-      geometry: PropTypes.shape({
-        spherical: PropTypes.shape({
-          computeDistanceBetween: PropTypes.func
-        })
-      })
-    })
-  }).isRequired,
+  google: googlePropTypes.isRequired,
   mapContainerStyle: PropTypes.shape({}).isRequired,
   position: PropTypes.shape({}),
   onPolygonLoad: PropTypes.func.isRequired,
-  setRoundOver: PropTypes.func.isRequired,
-  setGame: PropTypes.func.isRequired
+  setShowRoundResultsModal: PropTypes.func.isRequired,
+  setGame: PropTypes.func.isRequired,
+  polygonKey: PropTypes.number.isRequired,
+  round: PropTypes.number.isRequired
 }
 
 GuessMap.defaultProps = {
-  position: { lat: 0, lng: 0 }
+  position: DEFAULT_POSITION
 }
 
 export default GuessMap

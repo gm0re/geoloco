@@ -4,7 +4,10 @@ import styled from 'styled-components'
 import { StreetViewService } from '@react-google-maps/api'
 import { BackTop, Button, Modal } from 'antd'
 
-import GAME_INIT from '../constants/game'
+import {
+  game as GAME_INIT,
+  round as ROUND_INIT
+} from '../constants/game'
 import Street from './Street'
 import GuessMap from './GuessMap'
 import RoundResults from './RoundResults'
@@ -35,6 +38,7 @@ const GoUpButton = styled.div`
   font-size: 14;
   z-index: 1000;
 `
+const getNewPolyKey = () => `poly-${Math.random() * 100}`
 
 const ModalFooter = ({
   isLastRound,
@@ -43,7 +47,7 @@ const ModalFooter = ({
   onNextRoundClick,
   onGameOverClick
 }) => (
-  isLastRound ? (
+  !isLastRound ? (
     <Button onClick={onNextRoundClick}>{nextRoundText}</Button>
   ) : (
     <Button onClick={onGameOverClick}>{gameOverText}</Button>
@@ -60,8 +64,9 @@ ModalFooter.propTypes = {
 
 const GeoLoco = ({ google }) => {
   const [game, setGame] = useState(GAME_INIT)
-  const [roundOver, setRoundOver] = useState(false)
+  const [showRoundsResultModal, setShowRoundResultsModal] = useState(false)
   const [polygon, setPolygon] = useState()
+  const [polygonKey, setPolygonKey] = useState(getNewPolyKey())
   const [position, setRandomPosition] = usePosition()
   const [
     ,
@@ -83,7 +88,14 @@ const GeoLoco = ({ google }) => {
   }
 
   const onNextRoundClick = () => {
-    console.log('next round')
+    setGame((startedGame) => ({
+      ...startedGame,
+      rounds: [
+        ...startedGame.rounds,
+        { ...ROUND_INIT },
+      ]
+    }))
+    setShowRoundResultsModal(false)
   }
 
   const onGameOverClick = () => {
@@ -102,6 +114,11 @@ const GeoLoco = ({ google }) => {
     }
   }, [position])
 
+  useEffect(() => {
+    console.log('useeff', game)
+    setPolygonKey(getNewPolyKey())
+  }, [game.rounds.length])
+
   return (
     <Page>
       {google && (
@@ -117,10 +134,12 @@ const GeoLoco = ({ google }) => {
           <GuessMap
             google={google}
             mapContainerStyle={mapContainerStyle}
+            polygonKey={polygonKey}
             onPolygonLoad={onPolygonLoad}
             position={position}
-            setRoundOver={setRoundOver}
+            setShowRoundResultsModal={setShowRoundResultsModal}
             setGame={setGame}
+            round={game.rounds.length}
           />
         </>
       )}
@@ -128,7 +147,7 @@ const GeoLoco = ({ google }) => {
         <GoUpButton>{GO_UP}</GoUpButton>
       </BackTop>
       <Modal
-        visible={roundOver}
+        visible={showRoundsResultModal}
         footer={[
           <ModalFooter
             isLastRound={isLastRound}
