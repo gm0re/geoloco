@@ -94,12 +94,14 @@ const GuessMap = ({
           zoomControl: false
         }}
       >
-        <Polygon
-          options={{ clickable: false }}
-          paths={site}
-          onLoad={onPolygonLoad}
-          key={polygonKey}
-        />
+        {site && site.length && (
+          <Polygon
+            options={{ clickable: false }}
+            paths={site}
+            onLoad={onPolygonLoad}
+            key={polygonKey}
+          />
+        )}
         {guessMarker && (
           <Marker position={guessMarker} />
         )}

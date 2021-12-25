@@ -13,7 +13,7 @@ import GuessMap from './GuessMap'
 import RoundResults from './RoundResults'
 import usePosition from '../hooks/usePosition'
 import useStreetViewSvc from '../hooks/useStreetViewSvc'
-import areas from '../constants/areas'
+import countriesIndex from '../constants/countries/index.json'
 
 const NEXT_ROUND_TEXT = 'Play next round'
 const GAME_OVER_TEXT = 'See results'
@@ -64,8 +64,8 @@ ModalFooter.propTypes = {
 }
 
 const GeoLoco = ({ google }) => {
-  const randomAreaIndex = Math.floor(Math.random() * areas.length)
-  const [site, setSite] = useState(areas[randomAreaIndex])
+  const randomAreaIndex = Math.floor(Math.random() * countriesIndex.length)
+  const [site, setSite] = useState()
   const [guessMarker, setGuessMarker] = useState()
   const [game, setGame] = useState(GAME_INIT)
   const [showRoundsResultModal, setShowRoundResultsModal] = useState(false)
@@ -117,8 +117,30 @@ const GeoLoco = ({ google }) => {
   }, [position])
 
   useEffect(() => {
-    setPolygonKey(getNewPolyKey())
-    setSite(areas[randomAreaIndex])
+    setPolygonKey(getNewPolyKey)
+
+    if (randomAreaIndex) {
+      fetch(`/countries/${countriesIndex[randomAreaIndex]}.json`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error ${response.status}`)
+          }
+          return response.json()
+        })
+        .then(((countryBundles) => {
+          console.log('country', countryBundles, randomAreaIndex, countriesIndex[randomAreaIndex])
+          let selectedBundles = countryBundles
+          // found a multi polygon country
+          if (Array.isArray(countryBundles[0])) {
+            // get one of the polygons randomly
+            selectedBundles = countryBundles[Math.floor(Math.random() * countryBundles.length)]
+          }
+          setSite(selectedBundles)
+        }))
+        .catch((error) => {
+          console.log(error)
+        });
+    }
   }, [game.rounds.length])
 
   return (
