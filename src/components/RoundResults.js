@@ -53,7 +53,7 @@ const RoundResults = ({
   round,
   position,
   site,
-  guessMarker
+  guessPosition
 }) => {
   const [formattedDistance, setFormattedDistance] = useState(getFormattedDistance(
     round.distance
@@ -94,19 +94,19 @@ const RoundResults = ({
         }}
       >
         {/* just for debugging purpose show polygon: */}
-        {/* <Polygon
+        <Polygon
           options={{ clickable: false }}
           paths={site}
-        /> */}
+        />
         {position && (
           <Marker position={position} />
         )}
-        {guessMarker && (
-          <Marker position={guessMarker} />
+        {guessPosition && (
+          <Marker position={guessPosition} />
         )}
-        {position && guessMarker && (
+        {position && guessPosition && (
           <Polyline
-            path={[position, guessMarker]}
+            path={[position, guessPosition]}
             options={{ strokeWeight: 2 }}
           />
         )}
@@ -119,12 +119,12 @@ RoundResults.propTypes = {
   round: roundPropTypes.isRequired,
   site: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   position: PropTypes.shape({}),
-  guessMarker: PropTypes.shape({})
+  guessPosition: PropTypes.shape({})
 }
 
 RoundResults.defaultProps = {
   position: undefined,
-  guessMarker: undefined
+  guessPosition: undefined
 }
 
 export default RoundResults
