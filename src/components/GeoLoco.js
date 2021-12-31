@@ -11,10 +11,12 @@ import {
 import Street from './Street'
 import GuessMap from './GuessMap'
 import RoundResults from './RoundResults'
+import GameResults from './GameResults'
 import usePosition from '../hooks/usePosition'
 import useStreetViewSvc from '../hooks/useStreetViewSvc'
 import countriesIndex from '../constants/countries/index.json'
 
+const NEW_GAME_TEXT = 'Play new game'
 const NEXT_ROUND_TEXT = 'Play next round'
 const GAME_OVER_TEXT = 'See results'
 const GO_UP = 'Up!'
@@ -45,30 +47,43 @@ const ModalFooter = ({
   isLastRound,
   nextRoundText,
   gameOverText,
+  newGameText,
+  showGameResults,
   onNextRoundClick,
-  onGameOverClick
+  onGameOverClick,
+  onNewGameClick
 }) => (
-  !isLastRound ? (
-    <Button onClick={onNextRoundClick}>{nextRoundText}</Button>
-  ) : (
-    <Button onClick={onGameOverClick}>{gameOverText}</Button>
-  )
+  <>
+    {!isLastRound && (
+      <Button onClick={onNextRoundClick}>{nextRoundText}</Button>
+    )}
+    {isLastRound && !showGameResults && (
+      <Button onClick={onGameOverClick}>{gameOverText}</Button>
+    )}
+    {showGameResults && (
+      <Button onClick={onNewGameClick}>{newGameText}</Button>
+    )}
+  </>
 )
 
 ModalFooter.propTypes = {
   isLastRound: PropTypes.bool.isRequired,
   nextRoundText: PropTypes.string.isRequired,
   gameOverText: PropTypes.string.isRequired,
+  newGameText: PropTypes.string.isRequired,
+  showGameResults: PropTypes.bool.isRequired,
   onNextRoundClick: PropTypes.func.isRequired,
-  onGameOverClick: PropTypes.func.isRequired
+  onGameOverClick: PropTypes.func.isRequired,
+  onNewGameClick: PropTypes.func.isRequired
 }
 
 const GeoLoco = ({ google }) => {
   const randomAreaIndex = Math.floor(Math.random() * countriesIndex.length)
   const [site, setSite] = useState()
-  const [guessMarker, setGuessMarker] = useState()
+  const [guessPosition, setGuessPosition] = useState()
   const [game, setGame] = useState(GAME_INIT)
   const [showRoundsResultModal, setShowRoundResultsModal] = useState(false)
+  const [showGameResults, setShowGameResults] = useState(false)
   const [polygon, setPolygon] = useState()
   const [polygonKey, setPolygonKey] = useState(getNewPolyKey())
   const [position, setRandomPosition] = usePosition()
@@ -79,7 +94,7 @@ const GeoLoco = ({ google }) => {
     setNewStreetViewPosition
   ] = useStreetViewSvc()
 
-  const isLastRound = game.rounds.length - 1 === game.maxRounds
+  const isLastRound = game.rounds.length === game.maxRounds
 
   const onPolygonLoad = (newPolygon) => {
     setPolygon(newPolygon)
@@ -101,7 +116,13 @@ const GeoLoco = ({ google }) => {
   }
 
   const onGameOverClick = () => {
-    console.log('game over')
+    setShowGameResults(true)
+  }
+
+  const onNewGameClick = () => {
+    setGame(GAME_INIT)
+    setShowGameResults(false)
+    setShowRoundResultsModal(false)
   }
 
   useEffect(() => {
@@ -155,19 +176,21 @@ const GeoLoco = ({ google }) => {
               game={game}
             />
           )}
-          <GuessMap
-            google={google}
-            mapContainerStyle={mapContainerStyle}
-            polygonKey={polygonKey}
-            onPolygonLoad={onPolygonLoad}
-            position={position}
-            setShowRoundResultsModal={setShowRoundResultsModal}
-            setGame={setGame}
-            round={game.rounds.length}
-            setGuessMarker={setGuessMarker}
-            guessMarker={guessMarker}
-            site={site}
-          />
+          {site && (
+            <GuessMap
+              google={google}
+              mapContainerStyle={mapContainerStyle}
+              polygonKey={polygonKey}
+              onPolygonLoad={onPolygonLoad}
+              position={position}
+              setShowRoundResultsModal={setShowRoundResultsModal}
+              setGame={setGame}
+              round={game.rounds.length}
+              setGuessPosition={setGuessPosition}
+              guessPosition={guessPosition}
+              site={site}
+            />
+          )}
         </>
       )}
       <BackTop>
@@ -176,22 +199,32 @@ const GeoLoco = ({ google }) => {
       <Modal
         visible={showRoundsResultModal}
         width="70%"
+        onCancel={() => setShowRoundResultsModal(false)}
         footer={[
           <ModalFooter
             isLastRound={isLastRound}
             nextRoundText={NEXT_ROUND_TEXT}
+            showGameResults={showGameResults}
             gameOverText={GAME_OVER_TEXT}
+            newGameText={NEW_GAME_TEXT}
             onNextRoundClick={onNextRoundClick}
             onGameOverClick={onGameOverClick}
+            onNewGameClick={onNewGameClick}
           />
         ]}
       >
-        <RoundResults
-          round={game.rounds[game.rounds.length - 1]}
-          site={site}
-          position={position}
-          guessMarker={guessMarker}
-        />
+        {site && !showGameResults && (
+          <RoundResults
+            round={game.rounds[game.rounds.length - 1]}
+            site={site}
+            position={position}
+            guessPosition={guessPosition}
+            setGame={setGame}
+          />
+        )}
+        {showGameResults && (
+          <GameResults game={game} />
+        )}
       </Modal>
     </Page>
   )
