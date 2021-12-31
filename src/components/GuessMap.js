@@ -30,10 +30,10 @@ const GuessMap = ({
   onPolygonLoad,
   setShowRoundResultsModal,
   setGame,
-  guessMarker,
+  guessPosition,
   polygonKey,
   round,
-  setGuessMarker,
+  setGuessPosition,
   site
 }) => {
   const [distanceFromGuessed, setDistanceFromGuessed] = useState()
@@ -43,22 +43,29 @@ const GuessMap = ({
   )
 
   const onMapClick = (event) => {
-    const newGuessMarker = {
+    const newGuessPosition = {
       lat: event.latLng.lat(),
       lng: event.latLng.lng()
     }
-    setGuessMarker(newGuessMarker)
+    setGuessPosition(newGuessPosition)
     setDistanceFromGuessed(calculateDistance(event.latLng, new google.maps.LatLng(position)))
   }
 
   const onGuessButtonClick = () => {
-    const newGame = (game) => {
-      // eslint-disable-next-line
-      game.rounds[game.rounds.length - 1].distance = distanceFromGuessed
+    const newGame = (startedGame) => {
+      const startedRound = {
+        ...startedGame.rounds[startedGame.rounds.length - 1],
+        position,
+        guessPosition,
+        distance: distanceFromGuessed
+      }
+      // eslint-disable-next-line no-param-reassign
+      startedGame.rounds[startedGame.rounds.length - 1] = startedRound
+
       return {
-        ...game,
+        ...startedGame,
         rounds: [
-          ...game.rounds,
+          ...startedGame.rounds,
         ]
       }
     }
@@ -67,7 +74,7 @@ const GuessMap = ({
   }
 
   useEffect(() => {
-    setGuessMarker()
+    setGuessPosition()
   }, [round])
 
   return (
@@ -76,15 +83,15 @@ const GuessMap = ({
         <GuessButton
           size="large"
           onClick={onGuessButtonClick}
-          disabled={!guessMarker}
+          disabled={!guessPosition}
         >
           {GUESS_BUTTON_TEXT}
         </GuessButton>
       </GuessButtonWrapper>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        zoom={12}
-        center={position}
+        zoom={2}
+        center={DEFAULT_POSITION}
         onClick={onMapClick}
         options={{
           fullscreenControl: false,
@@ -94,16 +101,15 @@ const GuessMap = ({
           zoomControl: false
         }}
       >
-        {site && site.length && (
-          <Polygon
-            options={{ clickable: false }}
-            paths={site}
-            onLoad={onPolygonLoad}
-            key={polygonKey}
-          />
-        )}
-        {guessMarker && (
-          <Marker position={guessMarker} />
+        <Polygon
+          options={{ clickable: false }}
+          paths={site}
+          onLoad={onPolygonLoad}
+          key={polygonKey}
+          visible={false}
+        />
+        {guessPosition && (
+          <Marker position={guessPosition} />
         )}
       </GoogleMap>
     </div>
@@ -117,8 +123,8 @@ GuessMap.propTypes = {
   onPolygonLoad: PropTypes.func.isRequired,
   setShowRoundResultsModal: PropTypes.func.isRequired,
   setGame: PropTypes.func.isRequired,
-  guessMarker: PropTypes.shape({}),
-  setGuessMarker: PropTypes.func.isRequired,
+  guessPosition: PropTypes.shape({}),
+  setGuessPosition: PropTypes.func.isRequired,
   polygonKey: PropTypes.string.isRequired,
   round: PropTypes.number.isRequired,
   site: PropTypes.arrayOf(PropTypes.shape({})).isRequired
@@ -126,7 +132,7 @@ GuessMap.propTypes = {
 
 GuessMap.defaultProps = {
   position: DEFAULT_POSITION,
-  guessMarker: undefined
+  guessPosition: undefined
 }
 
 export default GuessMap
