@@ -1,6 +1,8 @@
 export const round = {
   score: 0,
-  distance: null
+  distance: null,
+  position: undefined,
+  guessPosition: undefined
 }
 
 export const game = {
