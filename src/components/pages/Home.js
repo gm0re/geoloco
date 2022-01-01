@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Button, Typography } from 'antd'
 
@@ -8,11 +8,17 @@ const ContentWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #fff;
+  padding: 16px;
 `
 
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
+`
+
+const MenuWrapper = styled.div`
+  padding: 100px 50px 100px 50px;
 `
 
 const GeoLocoTitle = () => (
@@ -21,7 +27,7 @@ const GeoLocoTitle = () => (
 
 const Home = () => (
   <ContentWrapper>
-    <div>
+    <MenuWrapper>
       <GeoLocoTitle />
       <ButtonWrapper>
         <Button
@@ -31,7 +37,7 @@ const Home = () => (
           Play!
         </Button>
       </ButtonWrapper>
-    </div>
+    </MenuWrapper>
   </ContentWrapper>
 )
 

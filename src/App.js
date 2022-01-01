@@ -5,8 +5,7 @@ import {
   Route,
 } from 'react-router-dom';
 import {
-  Layout,
-  Menu
+  Layout
 } from 'antd'
 
 import {
@@ -17,12 +16,21 @@ import {
 
 const { Content } = Layout
 
+const StyledLayout = styled(Layout)`
+  background: #fff;
+`
+
 const StyledContent = styled(Content)`
   padding: 20px;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const App = () => (
-  <Layout>
+  <StyledLayout>
     <StyledContent>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -30,7 +38,7 @@ const App = () => (
         <Route path="/results" element={<GuessResults />} />
       </Routes>
     </StyledContent>
-  </Layout>
+  </StyledLayout>
 )
 
 export default App
