@@ -13,14 +13,22 @@ import googlePropTypes from './propTypes/google'
 const GUESS_BUTTON_TEXT = 'Guess!'
 const DEFAULT_POSITION = { lat: 0, lng: 0 }
 
+const GuessMapWrapper = styled.div`
+  position: relative;
+`
+
 const GuessButtonWrapper = styled.div`
   display: flex;
+  align-elements: center;
   justify-content: center;
-  padding: 8px;
+  width: 100%;
+  position: absolute;
+  top: -20px;
 `
 
 const GuessButton = styled(Button)`
-  width: 800px;
+  width: 200px;
+  z-index: 1000;
 `
 
 const GuessMap = ({
@@ -78,7 +86,7 @@ const GuessMap = ({
   }, [round])
 
   return (
-    <div>
+    <GuessMapWrapper>
       <GuessButtonWrapper>
         <GuessButton
           size="large"
@@ -112,7 +120,7 @@ const GuessMap = ({
           <Marker position={guessPosition} />
         )}
       </GoogleMap>
-    </div>
+    </GuessMapWrapper>
   )
 }
 
