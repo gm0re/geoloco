@@ -117,14 +117,15 @@ const RoundResults = ({
 
 RoundResults.propTypes = {
   round: roundPropTypes.isRequired,
-  site: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  site: PropTypes.arrayOf(PropTypes.shape({})),
   position: PropTypes.shape({}),
   guessPosition: PropTypes.shape({})
 }
 
 RoundResults.defaultProps = {
   position: undefined,
-  guessPosition: undefined
+  guessPosition: undefined,
+  site: undefined
 }
 
 export default RoundResults
