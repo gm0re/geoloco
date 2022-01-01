@@ -24,9 +24,11 @@ const Street = ({
         position={streetViewPosition}
         options={{
           addressControl: false,
+          linksControl: false,
           showRoadLabels: false,
           zoomControl: false,
-          fullscreenControl: false
+          fullscreenControl: false,
+          enableCloseButton: false
         }}
         visible
       />
