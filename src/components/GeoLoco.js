@@ -117,32 +117,11 @@ const GeoLoco = ({ google }) => {
     if (polygon) {
       setRandomPosition(google, polygon)
     }
-  }, [polygon])
-
-  useEffect(() => {
-    if (site && position) {
-      setNewStreetViewPosition(position)
-    }
-  }, [site, position])
+  }, [site, polygon])
 
   useEffect(() => {
     if (position) {
-      setGame((startedGame) => {
-        console.log('POSITION', position)
-        const startedRound = {
-          ...startedGame.rounds[startedGame.rounds.length - 1],
-          position,
-        }
-        // eslint-disable-next-line no-param-reassign
-        startedGame.rounds[startedGame.rounds.length - 1] = startedRound
-
-        return {
-          ...startedGame,
-          rounds: [
-            ...startedGame.rounds
-          ]
-        }
-      })
+      setNewStreetViewPosition(position)
     }
   }, [position])
 
