@@ -1,25 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { StreetViewService } from '@react-google-maps/api'
-import { BackTop, Button, Modal } from 'antd'
+import { Button } from 'antd'
 
 import {
   game as GAME_INIT,
   round as ROUND_INIT
 } from '../constants/game'
+import useSite from '../hooks/useSite'
+import usePosition from '../hooks/usePosition'
+import useStreetViewSvc from '../hooks/useStreetViewSvc'
 import Street from './Street'
 import GuessMap from './GuessMap'
 import RoundResults from './RoundResults'
 import GameResults from './GameResults'
-import usePosition from '../hooks/usePosition'
-import useStreetViewSvc from '../hooks/useStreetViewSvc'
-import countriesIndex from '../constants/countries/index.json'
+import ResultsModal from './ResultsModal'
 
-const NEW_GAME_TEXT = 'Play new game'
-const NEXT_ROUND_TEXT = 'Play next round'
-const GAME_OVER_TEXT = 'See results'
-const GO_UP = 'Up!'
+const GO_GUESS_TEXT = 'Go Guess'
+const GO_BACK_TO_TOP = 'Go back to street'
 
 const mapContainerStyle = {
   width: '100%',
@@ -28,58 +27,36 @@ const mapContainerStyle = {
 
 const Page = styled.div`
   height: 1640px;
+  width: 100%;
 `
 
-const GoUpButton = styled.div`
-  height: 40px;
-  width: 40px;
-  line-height: 40px;
-  border-radius: 4px;
-  background-color: #1088e9;
-  color: #fff;
-  text-align: center;
-  font-size: 14;
+const GoGuessButton = styled(Button)`
+  position: absolute;
+  bottom: 24px;
+  right: 64px;
+  margin: 8px;
   z-index: 1000;
 `
+const GoBackToTop = styled(Button)`
+  position: absolute;
+  bottom: 24px;
+  right: 64px;
+  margin: 8px;
+  z-index: 1000;
+`
+
+const StreetWrapper = styled.div`
+  position: relative;
+`
+
+const GuessMapWrapper = styled.div`
+  position: relative;
+`
+
 const getNewPolyKey = () => `poly-${Math.random() * 100}`
 
-const ModalFooter = ({
-  isLastRound,
-  nextRoundText,
-  gameOverText,
-  newGameText,
-  showGameResults,
-  onNextRoundClick,
-  onGameOverClick,
-  onNewGameClick
-}) => (
-  <>
-    {!isLastRound && (
-      <Button onClick={onNextRoundClick}>{nextRoundText}</Button>
-    )}
-    {isLastRound && !showGameResults && (
-      <Button onClick={onGameOverClick}>{gameOverText}</Button>
-    )}
-    {showGameResults && (
-      <Button onClick={onNewGameClick}>{newGameText}</Button>
-    )}
-  </>
-)
-
-ModalFooter.propTypes = {
-  isLastRound: PropTypes.bool.isRequired,
-  nextRoundText: PropTypes.string.isRequired,
-  gameOverText: PropTypes.string.isRequired,
-  newGameText: PropTypes.string.isRequired,
-  showGameResults: PropTypes.bool.isRequired,
-  onNextRoundClick: PropTypes.func.isRequired,
-  onGameOverClick: PropTypes.func.isRequired,
-  onNewGameClick: PropTypes.func.isRequired
-}
-
 const GeoLoco = ({ google }) => {
-  const randomAreaIndex = Math.floor(Math.random() * countriesIndex.length)
-  const [site, setSite] = useState()
+  const [site,, setRandomSite] = useSite()
   const [guessPosition, setGuessPosition] = useState()
   const [game, setGame] = useState(GAME_INIT)
   const [showRoundsResultModal, setShowRoundResultsModal] = useState(false)
@@ -93,6 +70,9 @@ const GeoLoco = ({ google }) => {
     streetViewPosition,
     setNewStreetViewPosition
   ] = useStreetViewSvc()
+
+  const streetRef = useRef()
+  const guessMapRef = useRef()
 
   const isLastRound = game.rounds.length === game.maxRounds
 
@@ -125,6 +105,14 @@ const GeoLoco = ({ google }) => {
     setShowRoundResultsModal(false)
   }
 
+  const onGoGuessClick = () => {
+    guessMapRef.current.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const onGoBackToTopClick = () => {
+    streetRef.current.scrollIntoView({ behavior: 'smooth' })
+  }
+
   useEffect(() => {
     if (polygon) {
       setRandomPosition(google, polygon)
@@ -139,81 +127,56 @@ const GeoLoco = ({ google }) => {
 
   useEffect(() => {
     setPolygonKey(getNewPolyKey)
-
-    if (randomAreaIndex) {
-      fetch(`/countries/${countriesIndex[randomAreaIndex]}.json`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error ${response.status}`)
-          }
-          return response.json()
-        })
-        .then(((countryBundles) => {
-          console.log('country', countryBundles, randomAreaIndex, countriesIndex[randomAreaIndex])
-          let selectedBundles = countryBundles
-          // found a multi polygon country
-          if (Array.isArray(countryBundles[0])) {
-            // get one of the polygons randomly
-            selectedBundles = countryBundles[Math.floor(Math.random() * countryBundles.length)]
-          }
-          setSite(selectedBundles)
-        }))
-        .catch((error) => {
-          console.log(error)
-        });
-    }
+    setRandomSite()
   }, [game.rounds.length])
 
   return (
     <Page>
       {google && (
         <>
-          <StreetViewService onLoad={onStreetViewServicesLoad} />
-          {streetViewPosition && (
-            <Street
-              mapContainerStyle={mapContainerStyle}
-              streetViewPosition={streetViewPosition}
-              game={game}
-            />
-          )}
-          {site && (
-            <GuessMap
-              google={google}
-              mapContainerStyle={mapContainerStyle}
-              polygonKey={polygonKey}
-              onPolygonLoad={onPolygonLoad}
-              position={position}
-              setShowRoundResultsModal={setShowRoundResultsModal}
-              setGame={setGame}
-              round={game.rounds.length}
-              setGuessPosition={setGuessPosition}
-              guessPosition={guessPosition}
-              site={site}
-            />
-          )}
+          <StreetWrapper ref={streetRef}>
+            <StreetViewService onLoad={onStreetViewServicesLoad} />
+            {streetViewPosition && (
+              <Street
+                mapContainerStyle={mapContainerStyle}
+                streetViewPosition={streetViewPosition}
+                game={game}
+              />
+            )}
+            <GoGuessButton onClick={onGoGuessClick}>{GO_GUESS_TEXT}</GoGuessButton>
+          </StreetWrapper>
+          <GuessMapWrapper ref={guessMapRef}>
+            {site && (
+              <GuessMap
+                google={google}
+                mapContainerStyle={mapContainerStyle}
+                polygonKey={polygonKey}
+                onPolygonLoad={onPolygonLoad}
+                position={position}
+                setShowRoundResultsModal={setShowRoundResultsModal}
+                setGame={setGame}
+                round={game.rounds.length}
+                setGuessPosition={setGuessPosition}
+                guessPosition={guessPosition}
+                site={site}
+              />
+            )}
+            <GoBackToTop onClick={onGoBackToTopClick}>{GO_BACK_TO_TOP}</GoBackToTop>
+          </GuessMapWrapper>
         </>
       )}
-      <BackTop>
-        <GoUpButton>{GO_UP}</GoUpButton>
-      </BackTop>
-      <Modal
-        visible={showRoundsResultModal}
-        width="70%"
-        onCancel={() => setShowRoundResultsModal(false)}
-        footer={[
-          <ModalFooter
-            isLastRound={isLastRound}
-            nextRoundText={NEXT_ROUND_TEXT}
-            showGameResults={showGameResults}
-            gameOverText={GAME_OVER_TEXT}
-            newGameText={NEW_GAME_TEXT}
-            onNextRoundClick={onNextRoundClick}
-            onGameOverClick={onGameOverClick}
-            onNewGameClick={onNewGameClick}
-          />
-        ]}
+      <ResultsModal
+        showRoundsResultModal={showRoundsResultModal}
+        setShowRoundResultsModal={setShowRoundResultsModal}
+        isLastRound={isLastRound}
+        showGameResults={showGameResults}
+        onNextRoundClick={onNextRoundClick}
+        onNewGameClick={onNewGameClick}
+        onGameOverClick={onGameOverClick}
       >
-        {site && !showGameResults && (
+        {showGameResults ? (
+          <GameResults game={game} />
+        ) : (
           <RoundResults
             round={game.rounds[game.rounds.length - 1]}
             site={site}
@@ -222,10 +185,7 @@ const GeoLoco = ({ google }) => {
             setGame={setGame}
           />
         )}
-        {showGameResults && (
-          <GameResults game={game} />
-        )}
-      </Modal>
+      </ResultsModal>
     </Page>
   )
 }
