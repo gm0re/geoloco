@@ -8,5 +8,5 @@ export const round = {
 export const game = {
   rounds: [{ ...round }],
   score: 0,
-  maxRounds: 3
+  maxRounds: 5
 }
