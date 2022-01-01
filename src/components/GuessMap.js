@@ -63,7 +63,7 @@ const GuessMap = ({
     const newGame = (startedGame) => {
       const startedRound = {
         ...startedGame.rounds[startedGame.rounds.length - 1],
-        position,
+        // position,
         guessPosition,
         distance: distanceFromGuessed
       }

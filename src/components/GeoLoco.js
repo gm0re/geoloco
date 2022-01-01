@@ -120,8 +120,29 @@ const GeoLoco = ({ google }) => {
   }, [polygon])
 
   useEffect(() => {
-    if (position) {
+    if (site && position) {
       setNewStreetViewPosition(position)
+    }
+  }, [site, position])
+
+  useEffect(() => {
+    if (position) {
+      setGame((startedGame) => {
+        console.log('POSITION', position)
+        const startedRound = {
+          ...startedGame.rounds[startedGame.rounds.length - 1],
+          position,
+        }
+        // eslint-disable-next-line no-param-reassign
+        startedGame.rounds[startedGame.rounds.length - 1] = startedRound
+
+        return {
+          ...startedGame,
+          rounds: [
+            ...startedGame.rounds
+          ]
+        }
+      })
     }
   }, [position])
 
@@ -129,6 +150,10 @@ const GeoLoco = ({ google }) => {
     setPolygonKey(getNewPolyKey)
     setRandomSite()
   }, [game.rounds.length])
+
+  useEffect(() => {
+    console.log('game', game)
+  }, [game])
 
   return (
     <Page>
