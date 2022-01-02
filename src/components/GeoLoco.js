@@ -5,10 +5,7 @@ import { StreetViewService } from '@react-google-maps/api'
 import { Button } from 'antd'
 import { v4 as uuid } from 'uuid'
 
-import {
-  game as GAME_INIT,
-  round as ROUND_INIT
-} from '../constants/game'
+import useGame from '../hooks/useGame'
 import useSite from '../hooks/useSite'
 import usePosition from '../hooks/usePosition'
 import useStreetViewSvc from '../hooks/useStreetViewSvc'
@@ -59,7 +56,13 @@ const getNewPolyKey = () => `poly-${uuid()}`
 const GeoLoco = ({ google }) => {
   const [site,, setRandomSite] = useSite()
   const [guessPosition, setGuessPosition] = useState()
-  const [game, setGame] = useState(GAME_INIT)
+  const [
+    game,
+    setGame,
+    setNewGame,
+    setStartedRound,
+    setNewRound
+  ] = useGame()
   const [showRoundsResultModal, setShowRoundResultsModal] = useState(false)
   const [showGameResults, setShowGameResults] = useState(false)
   const [polygon, setPolygon] = useState()
@@ -86,13 +89,7 @@ const GeoLoco = ({ google }) => {
   }
 
   const onNextRoundClick = () => {
-    setGame((startedGame) => ({
-      ...startedGame,
-      rounds: [
-        ...startedGame.rounds,
-        { ...ROUND_INIT },
-      ]
-    }))
+    setNewRound()
     setShowRoundResultsModal(false)
   }
 
@@ -101,7 +98,7 @@ const GeoLoco = ({ google }) => {
   }
 
   const onNewGameClick = () => {
-    setGame(GAME_INIT)
+    setNewGame()
     setShowGameResults(false)
     setShowRoundResultsModal(false)
   }
@@ -123,22 +120,7 @@ const GeoLoco = ({ google }) => {
   useEffect(() => {
     if (position) {
       setNewStreetViewPosition(position)
-      const newGame = (startedGame) => {
-        const startedRound = {
-          ...startedGame.rounds[startedGame.rounds.length - 1],
-          position,
-        }
-        // eslint-disable-next-line no-param-reassign
-        startedGame.rounds[startedGame.rounds.length - 1] = startedRound
-
-        return {
-          ...startedGame,
-          rounds: [
-            ...startedGame.rounds,
-          ]
-        }
-      }
-      setGame(newGame)
+      setStartedRound({ position })
     }
   }, [position])
 
@@ -146,7 +128,7 @@ const GeoLoco = ({ google }) => {
     setPolygonKey(getNewPolyKey)
     setRandomSite()
   }, [game.rounds.length])
-
+  // debugging game:
   useEffect(() => {
     console.log('game', game)
   }, [game])
@@ -175,7 +157,7 @@ const GeoLoco = ({ google }) => {
                 onPolygonLoad={onPolygonLoad}
                 position={position}
                 setShowRoundResultsModal={setShowRoundResultsModal}
-                setGame={setGame}
+                setStartedRound={setStartedRound}
                 round={game.rounds.length}
                 setGuessPosition={setGuessPosition}
                 guessPosition={guessPosition}

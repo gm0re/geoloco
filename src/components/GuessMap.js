@@ -37,7 +37,7 @@ const GuessMap = ({
   position,
   onPolygonLoad,
   setShowRoundResultsModal,
-  setGame,
+  setStartedRound,
   guessPosition,
   polygonKey,
   round,
@@ -60,23 +60,7 @@ const GuessMap = ({
   }
 
   const onGuessButtonClick = () => {
-    const newGame = (startedGame) => {
-      const startedRound = {
-        ...startedGame.rounds[startedGame.rounds.length - 1],
-        guessPosition,
-        distance: distanceFromGuessed
-      }
-      // eslint-disable-next-line no-param-reassign
-      startedGame.rounds[startedGame.rounds.length - 1] = startedRound
-
-      return {
-        ...startedGame,
-        rounds: [
-          ...startedGame.rounds,
-        ]
-      }
-    }
-    setGame(newGame)
+    setStartedRound({ guessPosition, distance: distanceFromGuessed })
     setShowRoundResultsModal(true)
   }
 
@@ -129,7 +113,7 @@ GuessMap.propTypes = {
   position: PropTypes.shape({}),
   onPolygonLoad: PropTypes.func.isRequired,
   setShowRoundResultsModal: PropTypes.func.isRequired,
-  setGame: PropTypes.func.isRequired,
+  setStartedRound: PropTypes.func.isRequired,
   guessPosition: PropTypes.shape({}),
   setGuessPosition: PropTypes.func.isRequired,
   polygonKey: PropTypes.string.isRequired,
