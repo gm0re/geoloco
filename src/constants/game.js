@@ -10,3 +10,7 @@ export const game = {
   score: 0,
   maxRounds: 5
 }
+
+export const maxScore = 100000
+
+export const maxDistance = 20000000

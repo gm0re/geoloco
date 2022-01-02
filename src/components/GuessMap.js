@@ -60,7 +60,7 @@ const GuessMap = ({
   }
 
   const onGuessButtonClick = () => {
-    setStartedRound({ guessPosition, distance: distanceFromGuessed })
+    setStartedRound({ guessPosition, distance: distanceFromGuessed }, true)
     setShowRoundResultsModal(true)
   }
 
