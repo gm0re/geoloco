@@ -6,38 +6,38 @@ import { Typography } from 'antd'
 const { Title, Text } = Typography
 
 const Wrapper = styled.div`
-  width: 250px;
-  height: 100px;
-  background-color: white;
   margin: 16px;
   color: white;
   position: absolute;
   right: 0;
   z-index: 100;
-  border: 1px #d9d9d9 solid;
-  box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+`
+
+const Card = styled.div`
+  border-radius: 100%;
+  background-color: white;
+  width: 100px;
+  height: 100px;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-
-  > div {
-    display: flex;
-    justify-content: space-around;
-    align-items: baseline;
-    flex-direction: row;
-  }
+  justify-content: center;
+  align-items: center;
+  margin: 8px;
 `
 
 const GameRoundsPanel = ({ game }) => (
   <Wrapper>
-    <div>
+    <Card>
       <Title level={4}>Round</Title>
-      <Title level={4}>Score</Title>
-    </div>
-    <div>
       <Text>{game.rounds.length} / {game.maxRounds}</Text>
+    </Card>
+    <Card>
+      <Title level={4}>Score</Title>
       <Text>{game.score}</Text>
-    </div>
+    </Card>
   </Wrapper>
 )
 
