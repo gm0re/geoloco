@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { StreetViewService } from '@react-google-maps/api'
 import { Button } from 'antd'
+import { v4 as uuid } from 'uuid'
 
 import {
   game as GAME_INIT,
@@ -53,7 +54,7 @@ const GuessMapWrapper = styled.div`
   position: relative;
 `
 
-const getNewPolyKey = () => `poly-${Math.random() * 100}`
+const getNewPolyKey = () => `poly-${uuid()}`
 
 const GeoLoco = ({ google }) => {
   const [site,, setRandomSite] = useSite()
@@ -122,6 +123,22 @@ const GeoLoco = ({ google }) => {
   useEffect(() => {
     if (position) {
       setNewStreetViewPosition(position)
+      const newGame = (startedGame) => {
+        const startedRound = {
+          ...startedGame.rounds[startedGame.rounds.length - 1],
+          position,
+        }
+        // eslint-disable-next-line no-param-reassign
+        startedGame.rounds[startedGame.rounds.length - 1] = startedRound
+
+        return {
+          ...startedGame,
+          rounds: [
+            ...startedGame.rounds,
+          ]
+        }
+      }
+      setGame(newGame)
     }
   }, [position])
 
