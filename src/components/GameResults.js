@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import styled from 'styled-components'
 import {
   GoogleMap,
@@ -6,6 +6,7 @@ import {
   Polyline,
 } from '@react-google-maps/api'
 import { Typography } from 'antd'
+import { v4 as uuid } from 'uuid'
 
 import { game as gamePropTypes } from './propTypes/game'
 
@@ -46,16 +47,16 @@ const GameResults = ({
       {game.rounds.map(({
         position,
         guessPosition
-      }, key) => (
-        <>
-          <Marker position={position} key={`round-position-${key}`} />
-          <Marker position={guessPosition} key={`round-guess-position-${key}`} />
+      }) => (
+        <Fragment key={uuid()}>
+          <Marker position={position} key={`round-position-${uuid()}`} />
+          <Marker position={guessPosition} key={`round-guess-position-${uuid()}`} />
           <Polyline
-            key={`round-poly-${key}`}
+            key={`round-poly-${uuid()}`}
             path={[position, guessPosition]}
             options={{ strokeWeight: 2 }}
           />
-        </>
+        </Fragment>
       ))}
     </GoogleMap>
   </Wrapper>
