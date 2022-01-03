@@ -5,10 +5,11 @@ import {
   Marker,
   Polyline,
 } from '@react-google-maps/api'
-import { Typography } from 'antd'
+import { Progress, Typography } from 'antd'
 import { v4 as uuid } from 'uuid'
 
 import { game as gamePropTypes } from './propTypes/game'
+import { maxScore as MAX_SCORE } from '../constants/game'
 
 const { Title } = Typography
 
@@ -32,6 +33,17 @@ const GameResults = ({
     <Title level={2}>
       Round Results
     </Title>
+    <Title level={3}>
+      Game Score: {game.score}
+    </Title>
+    <Progress
+      percent={(game.score / MAX_SCORE) * 100}
+      showInfo={false}
+      strokeColor={{
+        from: '#108ee9',
+        to: '#87d068',
+      }}
+    />
     <GoogleMap
       mapContainerStyle={mapContainerStyle}
       zoom={2}

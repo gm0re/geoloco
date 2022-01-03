@@ -8,7 +8,9 @@ import {
   Polyline,
 } from '@react-google-maps/api'
 import { Progress, Typography } from 'antd'
+
 import { round as roundPropTypes } from './propTypes/game'
+import { maxScore as MAX_SCORE } from '../constants/game'
 
 const { Title } = Typography
 
@@ -16,8 +18,6 @@ const mapContainerStyle = {
   height: 600,
   width: '100%'
 }
-
-const getScorePercent = (score) => score
 
 const getFormattedDistance = (distance) => {
   let formattedDistance = {
@@ -58,9 +58,6 @@ const RoundResults = ({
   const [formattedDistance, setFormattedDistance] = useState(getFormattedDistance(
     round.distance
   ))
-  const [scorePercent] = useState(
-    getScorePercent(round.score) || 50
-  )
 
   useEffect(() => {
     setFormattedDistance(getFormattedDistance(
@@ -73,8 +70,11 @@ const RoundResults = ({
       <Title level={2}>
         Distance: {`${formattedDistance.value} ${formattedDistance.um}`}
       </Title>
+      <Title level={3}>
+        Round Score: {round.score}
+      </Title>
       <Progress
-        percent={scorePercent}
+        percent={(round.score / MAX_SCORE) * 100}
         showInfo={false}
         strokeColor={{
           from: '#108ee9',

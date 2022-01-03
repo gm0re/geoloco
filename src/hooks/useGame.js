@@ -9,7 +9,7 @@ import {
 
 const m = MAX_SCORE / MAX_DISTANCE
 // TODO: improve score calculation to a log scale
-const getRoundScore = (distance) => ((-m * distance) + MAX_SCORE)
+const getRoundScore = (distance) => Math.floor(((-m * distance) + MAX_SCORE))
 
 // TODO: review
 const formatDistanceForScore = (distance) => {
@@ -57,7 +57,7 @@ const useGame = () => {
 
       return {
         ...startedGame,
-        score: totalRoundsScore / startedGame.rounds.length,
+        score: Math.floor(totalRoundsScore / startedGame.rounds.length),
         rounds: [
           ...startedGame.rounds,
         ]
