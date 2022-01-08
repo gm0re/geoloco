@@ -40,7 +40,6 @@ const GuessMap = ({
   setStartedRound,
   guessPosition,
   polygonKey,
-  round,
   setGuessPosition,
   site
 }) => {
@@ -63,10 +62,6 @@ const GuessMap = ({
     setStartedRound({ guessPosition, distance: distanceFromGuessed }, true)
     setShowRoundResultsModal(true)
   }
-
-  useEffect(() => {
-    setGuessPosition()
-  }, [round])
 
   return (
     <GuessMapWrapper>
@@ -117,7 +112,6 @@ GuessMap.propTypes = {
   guessPosition: PropTypes.shape({}),
   setGuessPosition: PropTypes.func.isRequired,
   polygonKey: PropTypes.string.isRequired,
-  round: PropTypes.number.isRequired,
   site: PropTypes.arrayOf(PropTypes.shape({})).isRequired
 }
 
