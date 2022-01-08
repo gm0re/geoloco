@@ -111,18 +111,12 @@ const RoundResults = ({
           options={{ clickable: false }}
           paths={site}
         />
-        {position && (
-          <Marker position={position} />
-        )}
-        {guessPosition && (
-          <Marker position={guessPosition} />
-        )}
-        {position && guessPosition && (
-          <Polyline
-            path={[position, guessPosition]}
-            options={{ strokeWeight: 2 }}
-          />
-        )}
+        <Marker position={position} />
+        <Marker position={guessPosition} />
+        <Polyline
+          path={[position, guessPosition]}
+          options={{ strokeWeight: 2 }}
+        />
       </GoogleMap>
     </Wrapper>
   )
