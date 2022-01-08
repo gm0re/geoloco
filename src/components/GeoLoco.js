@@ -187,9 +187,10 @@ const GeoLoco = ({ google }) => {
         onGameOverClick={onGameOverClick}
       >
         {showGameResults ? (
-          <GameResults game={game} />
+          <GameResults game={game} google={google} />
         ) : (
           <RoundResults
+            google={google}
             round={game.rounds[game.rounds.length - 1]}
             site={site}
             position={position}
