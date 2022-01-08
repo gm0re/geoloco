@@ -114,7 +114,7 @@ const GeoLoco = ({ google }) => {
     if (polygon) {
       setRandomPosition(google, polygon)
     }
-  }, [site, polygon])
+  }, [polygon])
 
   useEffect(() => {
     if (position) {
@@ -125,6 +125,7 @@ const GeoLoco = ({ google }) => {
   useEffect(() => {
     if (streetViewPosition) {
       setStartedRound({ position: streetViewPosition })
+      onGoBackToTopClick()
     }
   }, [streetViewPosition])
 
