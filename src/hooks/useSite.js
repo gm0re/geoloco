@@ -7,6 +7,8 @@ const useSite = () => {
   const randomAreaIndex = Math.floor(Math.random() * countriesIndex.length)
 
   const setRandomSite = () => {
+    setSite()
+
     fetch(`/countries/${countriesIndex[randomAreaIndex]}.json`)
       .then((response) => {
         if (!response.ok) {
@@ -31,7 +33,6 @@ const useSite = () => {
 
   return [
     site,
-    setSite,
     setRandomSite,
   ]
 }

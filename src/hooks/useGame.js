@@ -78,7 +78,6 @@ const useGame = () => {
 
   return [
     game,
-    setGame,
     setNewGame,
     setStartedRound,
     setNewRound,
