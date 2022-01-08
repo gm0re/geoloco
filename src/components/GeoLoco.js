@@ -54,11 +54,10 @@ const GuessMapWrapper = styled.div`
 const getNewPolyKey = () => `poly-${uuid()}`
 
 const GeoLoco = ({ google }) => {
-  const [site,, setRandomSite] = useSite()
+  const [site, setRandomSite] = useSite()
   const [guessPosition, setGuessPosition] = useState()
   const [
     game,
-    setGame,
     setNewGame,
     setStartedRound,
     setNewRound
@@ -120,14 +119,23 @@ const GeoLoco = ({ google }) => {
   useEffect(() => {
     if (position) {
       setNewStreetViewPosition(position)
-      setStartedRound({ position })
     }
   }, [position])
 
   useEffect(() => {
+    if (streetViewPosition) {
+      setStartedRound({ position: streetViewPosition })
+    }
+  }, [streetViewPosition])
+
+  useEffect(() => {
+    setGuessPosition()
+    setPolygon()
     setPolygonKey(getNewPolyKey)
     setRandomSite()
+    setNewStreetViewPosition()
   }, [game.rounds.length])
+
   // debugging game:
   useEffect(() => {
     console.log('game', game)
@@ -185,7 +193,6 @@ const GeoLoco = ({ google }) => {
             site={site}
             position={position}
             guessPosition={guessPosition}
-            setGame={setGame}
           />
         )}
       </ResultsModal>
