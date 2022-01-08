@@ -9,6 +9,7 @@ import {
 } from '@react-google-maps/api'
 import { Progress, Typography } from 'antd'
 
+import googlePropTypes from './propTypes/google'
 import { round as roundPropTypes } from './propTypes/game'
 import { maxScore as MAX_SCORE } from '../constants/game'
 
@@ -50,14 +51,25 @@ const Wrapper = styled.div`
 `
 
 const RoundResults = ({
+  google,
   round,
   position,
   site,
   guessPosition
 }) => {
-  const [formattedDistance, setFormattedDistance] = useState(getFormattedDistance(
-    round.distance
-  ))
+  const [formattedDistance, setFormattedDistance] = useState(
+    getFormattedDistance(round.distance)
+  )
+
+  const onResultsMapLoad = (newGuessMap) => {
+    const bounds = new google.maps.LatLngBounds()
+    const markersCoords = [
+      new google.maps.LatLng(position.lat, position.lng),
+      new google.maps.LatLng(guessPosition.lat, guessPosition.lng)
+    ]
+    markersCoords.forEach((markerCoords) => bounds.extend(markerCoords))
+    newGuessMap.fitBounds(bounds)
+  }
 
   useEffect(() => {
     setFormattedDistance(getFormattedDistance(
@@ -82,6 +94,7 @@ const RoundResults = ({
         }}
       />
       <GoogleMap
+        onLoad={onResultsMapLoad}
         mapContainerStyle={mapContainerStyle}
         zoom={2}
         center={position}
@@ -116,10 +129,17 @@ const RoundResults = ({
 }
 
 RoundResults.propTypes = {
+  google: googlePropTypes.isRequired,
   round: roundPropTypes.isRequired,
   site: PropTypes.arrayOf(PropTypes.shape({})),
-  position: PropTypes.shape({}),
-  guessPosition: PropTypes.shape({})
+  position: PropTypes.shape({
+    lat: PropTypes.number,
+    lng: PropTypes.number
+  }),
+  guessPosition: PropTypes.shape({
+    lat: PropTypes.number,
+    lng: PropTypes.number
+  })
 }
 
 RoundResults.defaultProps = {
