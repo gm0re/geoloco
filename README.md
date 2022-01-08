@@ -6,6 +6,10 @@ To get started is necessary to process the data in `geoloco-countries-parser/cou
 
 Will generate in `public/countries` the geodata processed for countries bounds, and a `constants/countries/index.json` where will be listed the available countries.
 
+---
+## Have fun!
+
+Run the following command to get the game running
 ### `npm start`
 
 Runs the app in the development mode.\
