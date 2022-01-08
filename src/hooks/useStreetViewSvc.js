@@ -9,18 +9,22 @@ const useStreetViewSvc = () => {
   const [streetViewSvc, setStreetViewSvc] = useState()
 
   const setNewStreetViewPosition = (coords, maxTries = 10, accRadius = 1) => {
+    if (!coords) {
+      setStreetViewPosition()
+      return
+    }
     // random radius to get random valid location
     const radius = (Math.random() * (MAX_RADIUS - MIN_RADIUS) + MIN_RADIUS) * accRadius
 
     const setNewStreetView = (streetView, status) => {
-      console.log('radius', radius)
+      console.log('radius', streetView, radius)
+
       if (status === SUCCESS) {
         console.log(
-          'coords',
+          'streetView coords',
           streetView?.location?.latLng?.lat(),
           streetView?.location?.latLng?.lng()
         )
-
         setStreetViewPosition({
           lat: streetView?.location?.latLng?.lat(),
           lng: streetView?.location?.latLng?.lng()
@@ -35,13 +39,8 @@ const useStreetViewSvc = () => {
       return
     }
 
-    console.log(streetViewSvc)
-
     streetViewSvc.getPanorama({
-      location: {
-        lat: coords.lat,
-        lng: coords.lng
-      },
+      location: { ...coords },
       radius,
       source: 'outdoor'
     }, setNewStreetView)
