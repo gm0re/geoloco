@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useJsApiLoader } from '@react-google-maps/api'
+import { Spin } from 'antd'
 
 import GeoLoco from '../GeoLoco'
 
@@ -16,14 +17,14 @@ const GeoLocoInit = () => {
 
   if (loadError) {
     return (
-      <div>Todo roto {loadError}</div>
+      <div>Error: {loadError}</div>
     )
   }
 
   return (isLoaded && google) ? (
     <GeoLoco google={google} />
   ) : (
-    <div>Loading...</div>
+    <Spin spinning={!isLoaded}>Loading...</Spin>
   )
 }
 
