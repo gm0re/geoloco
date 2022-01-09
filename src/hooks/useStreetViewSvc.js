@@ -14,7 +14,7 @@ const useStreetViewSvc = () => {
       return
     }
     // random radius to get random valid location
-    const radius = (Math.random() * (MAX_RADIUS - MIN_RADIUS) + MIN_RADIUS) * accRadius
+    const radius = (Math.random() * MAX_RADIUS + MIN_RADIUS) * accRadius
 
     const setNewStreetView = (streetView, status) => {
       console.log('radius', radius)
