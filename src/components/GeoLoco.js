@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { StreetViewService } from '@react-google-maps/api'
-import { Button } from 'antd'
+import { Button, Spin } from 'antd'
 import { v4 as uuid } from 'uuid'
 
 import useGame from '../hooks/useGame'
@@ -110,6 +110,14 @@ const GeoLoco = ({ google }) => {
     streetRef.current.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const isLoading = () => (
+    !google
+    || !streetViewPosition
+    || !polygon
+    || !site
+    || !position
+  )
+
   useEffect(() => {
     if (polygon) {
       setRandomPosition(google, polygon)
@@ -145,7 +153,7 @@ const GeoLoco = ({ google }) => {
   return (
     <Page>
       {google && (
-        <>
+        <Spin spinning={isLoading()} size="large">
           <StreetWrapper ref={streetRef}>
             <StreetViewService onLoad={onStreetViewServicesLoad} />
             {streetViewPosition && (
@@ -175,7 +183,7 @@ const GeoLoco = ({ google }) => {
             )}
             <GoBackToTop onClick={onGoBackToTopClick}>{GO_BACK_TO_TOP}</GoBackToTop>
           </GuessMapWrapper>
-        </>
+        </Spin>
       )}
       <ResultsModal
         showRoundsResultModal={showRoundsResultModal}
