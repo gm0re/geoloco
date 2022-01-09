@@ -6,15 +6,9 @@ const getNewRandomCoordsInPoly = (google, polygon, ne, sw, maxTries = 10) => {
 
   const newPosition = new google.maps.LatLng(newPositionLat, newPositionLng)
 
-  console.log(
-    'newPosition',
-    newPosition.lat(),
-    newPosition.lng(),
-    google.maps.geometry.poly.containsLocation(newPosition, polygon)
-  )
   // new position found in the polygon
   if (google.maps.geometry.poly.containsLocation(newPosition, polygon)) {
-    console.log('encontre: ', { lat: newPosition.lat(), lng: newPosition.lng() })
+    console.log('encontre position: ', { lat: newPosition.lat(), lng: newPosition.lng() })
     return {
       lat: newPosition.lat(),
       lng: newPosition.lng(),
@@ -24,7 +18,7 @@ const getNewRandomCoordsInPoly = (google, polygon, ne, sw, maxTries = 10) => {
   if (maxTries > 0) {
     // eslint-disable-next-line no-param-reassign
     maxTries -= 1
-    console.log('no encontrado', maxTries)
+    console.log('position no encontrada', maxTries)
     return getNewRandomCoordsInPoly(google, polygon, ne, sw, maxTries)
   }
   // found nothing
