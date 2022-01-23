@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid'
 import useGame from '../hooks/useGame'
 import useSite from '../hooks/useSite'
 import usePosition from '../hooks/usePosition'
-import useStreetViewSvc from '../hooks/useStreetViewSvc'
+import useStreetView from '../hooks/useStreetView'
 import Street from './Street'
 import GuessMap from './GuessMap'
 import RoundResults from './RoundResults'
@@ -72,7 +72,7 @@ const GeoLoco = ({ google }) => {
     setStreetViewSvc,
     streetViewPosition,
     setNewStreetViewPosition
-  ] = useStreetViewSvc()
+  ] = useStreetView()
 
   const streetRef = useRef()
   const guessMapRef = useRef()
@@ -172,7 +172,7 @@ const GeoLoco = ({ google }) => {
                 mapContainerStyle={mapContainerStyle}
                 polygonKey={polygonKey}
                 onPolygonLoad={onPolygonLoad}
-                position={position}
+                position={game.rounds[game.rounds.length - 1].position}
                 setShowRoundResultsModal={setShowRoundResultsModal}
                 setStartedRound={setStartedRound}
                 round={game.rounds.length}
@@ -201,7 +201,7 @@ const GeoLoco = ({ google }) => {
             google={google}
             round={game.rounds[game.rounds.length - 1]}
             site={site}
-            position={position}
+            position={game.rounds[game.rounds.length - 1].position}
             guessPosition={guessPosition}
           />
         )}
