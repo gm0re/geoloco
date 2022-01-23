@@ -142,7 +142,6 @@ const GeoLoco = ({ google }) => {
   }, [streetViewPosition])
 
   useEffect(() => {
-    console.log('countryName', countryName)
     setGuessPosition()
     setPolygon()
     setPolygonKey(getNewPolyKey)
