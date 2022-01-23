@@ -1,24 +1,38 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Button, Typography } from 'antd'
+import countries from '../../constants/countries/index.json'
 
 const { Title } = Typography
 
 const ContentWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #fff;
-  padding: 16px;
 `
 
-const ButtonWrapper = styled.div`
+const CountriesWrapper = styled.div`
+`
+
+const CountryButton = styled(Button)`
+  margin: 4px;
+`
+
+const PlayButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
 `
 
 const MenuWrapper = styled.div`
-  padding: 100px 50px 100px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  > div {
+    padding: 24px;
+  }
 `
 
 const GeoLocoTitle = () => (
@@ -27,16 +41,27 @@ const GeoLocoTitle = () => (
 
 const Home = () => (
   <ContentWrapper>
+    <GeoLocoTitle />
     <MenuWrapper>
-      <GeoLocoTitle />
-      <ButtonWrapper>
+      <PlayButtonWrapper>
         <Button
           size="large"
           href="/geoloco"
         >
-          Play!
+          Play all countries!
         </Button>
-      </ButtonWrapper>
+      </PlayButtonWrapper>
+      <Title level={3}> - OR - </Title>
+      <CountriesWrapper>
+        {countries.map((country) => (
+          <CountryButton
+            size="middle"
+            href={`/geoloco?country=${country}`}
+          >
+            {country.toUpperCase()}
+          </CountryButton>
+        ))}
+      </CountriesWrapper>
     </MenuWrapper>
   </ContentWrapper>
 )

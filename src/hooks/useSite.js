@@ -1,34 +1,42 @@
 import { useState } from 'react'
-import countriesIndex from '../constants/countries/index.json'
+import countries from '../constants/countries/index.json'
 
-const useSite = () => {
+const useSite = (country) => {
   const [site, setSite] = useState()
+  const [countryName] = useState(country)
 
-  const randomAreaIndex = Math.floor(Math.random() * countriesIndex.length)
+  const randomAreaIndex = Math.floor(Math.random() * countries.length)
 
-  const setRandomSite = () => {
-    setSite()
+  const setCountryBounds = (countryBounds) => {
+    let selectedBounds = countryBounds
+    // found a multi polygon country
+    if (Array.isArray(countryBounds[0])) {
+      // get one of the polygons randomly
+      selectedBounds = countryBounds[Math.floor(Math.random() * countryBounds.length)]
+    }
+    setSite(selectedBounds)
+  }
 
-    fetch(`/countries/${countriesIndex[randomAreaIndex]}.json`)
+  const setSiteCountryBounds = () => {
+    fetch(`/countries/${countryName || countries[randomAreaIndex]}.json`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error ${response.status}`)
         }
         return response.json()
       })
-      .then(((countryBundles) => {
-        console.log('country', countryBundles, randomAreaIndex, countriesIndex[randomAreaIndex])
-        let selectedBundles = countryBundles
-        // found a multi polygon country
-        if (Array.isArray(countryBundles[0])) {
-          // get one of the polygons randomly
-          selectedBundles = countryBundles[Math.floor(Math.random() * countryBundles.length)]
-        }
-        setSite(selectedBundles)
+      .then(((countryBounds) => {
+        console.log('country', countryBounds, randomAreaIndex, countryName || countries[randomAreaIndex])
+        setCountryBounds(countryBounds)
       }))
       .catch((error) => {
         console.log(error)
       });
+  }
+
+  const setRandomSite = () => {
+    setSite()
+    setSiteCountryBounds()
   }
 
   return [

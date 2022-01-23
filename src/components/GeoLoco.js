@@ -5,6 +5,7 @@ import { StreetViewService } from '@react-google-maps/api'
 import { Button, Spin } from 'antd'
 import { v4 as uuid } from 'uuid'
 
+import useQueryParam from '../hooks/useQueryParam'
 import useGame from '../hooks/useGame'
 import useSite from '../hooks/useSite'
 import usePosition from '../hooks/usePosition'
@@ -54,7 +55,10 @@ const GuessMapWrapper = styled.div`
 const getNewPolyKey = () => `poly-${uuid()}`
 
 const GeoLoco = ({ google }) => {
-  const [site, setRandomSite] = useSite()
+  const query = useQueryParam()
+  const countryName = query.get('country')
+
+  const [site, setRandomSite] = useSite(countryName)
   const [guessPosition, setGuessPosition] = useState()
   const [
     game,
@@ -138,6 +142,7 @@ const GeoLoco = ({ google }) => {
   }, [streetViewPosition])
 
   useEffect(() => {
+    console.log('countryName', countryName)
     setGuessPosition()
     setPolygon()
     setPolygonKey(getNewPolyKey)
