@@ -44,7 +44,6 @@ const GuessMap = ({
   site
 }) => {
   const [distanceFromGuessed, setDistanceFromGuessed] = useState()
-  const [guessMap, setGuessMap] = useState()
 
   const calculateDistance = (pointA, pointB) => (
     google.maps.geometry.spherical.computeDistanceBetween(pointA, pointB)

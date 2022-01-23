@@ -4,7 +4,7 @@ const SUCCESS = 'OK'
 const MIN_RADIUS = 50
 const MAX_RADIUS = 75
 
-const useStreetViewSvc = () => {
+const useStreetView = () => {
   const [streetViewPosition, setStreetViewPosition] = useState()
   const [streetViewSvc, setStreetViewSvc] = useState()
 
@@ -25,6 +25,7 @@ const useStreetViewSvc = () => {
           streetView?.location?.latLng?.lat(),
           streetView?.location?.latLng?.lng()
         )
+
         setStreetViewPosition({
           lat: streetView?.location?.latLng?.lat(),
           lng: streetView?.location?.latLng?.lng()
@@ -54,4 +55,4 @@ const useStreetViewSvc = () => {
   ]
 }
 
-export default useStreetViewSvc
+export default useStreetView
