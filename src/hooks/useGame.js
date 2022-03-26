@@ -7,9 +7,7 @@ import {
   maxDistance as MAX_DISTANCE
 } from '../constants/game'
 
-const m = MAX_SCORE / MAX_DISTANCE
-// TODO: improve score calculation to a log scale
-const getRoundScore = (distance) => Math.floor(((-m * distance) + MAX_SCORE))
+const getRoundScore = (distance) => MAX_SCORE * (0.999 ** (distance / 1000))
 
 // TODO: review
 const formatDistanceForScore = (distance) => {
