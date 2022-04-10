@@ -56,9 +56,10 @@ const getNewPolyKey = () => `poly-${uuid()}`
 
 const GeoLoco = ({ google }) => {
   const query = useQueryParam()
-  const countryName = query.get('country')
+  const countriesNames = query.get('countries')
+  const selectedCountries = countriesNames && countriesNames.split(',')
 
-  const [site, setRandomSite] = useSite(countryName)
+  const [site, setRandomSite] = useSite(selectedCountries)
   const [guessPosition, setGuessPosition] = useState()
   const [
     game,
