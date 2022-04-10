@@ -2,11 +2,14 @@
 
 To get started is necessary to process the data in `geoloco-countries-parser/countries.geojson` so the app can generate the polygon boundles for each country.
 
-### `node geoloco-countries/index.js`
+### `cd geoloco-countries && node index.js`
 
-Will generate in `public/countries` the geodata processed for countries bounds, and a `constants/countries/index.json` where will be listed the available countries.
+Will generate in `public/countries/*` the geodata processed for countries bounds, and a `constants/countries/index.json` where will be listed the available countries.
 
 ## Have fun!
+
+Run the following command to install dependencies
+### `npm i`
 
 Run the following command to get the game running
 ### `npm start`
