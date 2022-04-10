@@ -49,7 +49,7 @@ const GameResults = ({
         Round Results
       </Title>
       <Title level={3}>
-        Game Score: {game.score}
+        Game Score: {Math.floor(game.score)}
       </Title>
       <Progress
         percent={(game.score / MAX_SCORE) * 100}

@@ -83,7 +83,7 @@ const RoundResults = ({
         Distance: {`${formattedDistance.value} ${formattedDistance.um}`}
       </Title>
       <Title level={3}>
-        Round Score: {round.score}
+        Round Score: {Math.floor(round.score)}
       </Title>
       <Progress
         percent={(round.score / MAX_SCORE) * 100}
