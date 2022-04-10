@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import countries from '../constants/countries/index.json'
 
-const randomAreaIndex = Math.floor(Math.random() * countries.length)
-
 const getCountryName = (country) => (
   country
     ? country[Math.floor(Math.random() * country.length)]
@@ -11,7 +9,7 @@ const getCountryName = (country) => (
 
 const useSite = (country) => {
   const [site, setSite] = useState()
-  const [countryName] = useState(getCountryName(country))
+  const [countryName, setCountryName] = useState(getCountryName(country))
 
   const getRandomSiteIndexBasedOnArea = (countryBounds) => {
     const areas = countryBounds.map(({ area }) => area)
@@ -43,7 +41,7 @@ const useSite = (country) => {
         return response.json()
       })
       .then(((countryBounds) => {
-        console.log('country', countryBounds, randomAreaIndex, countryName || countries[randomAreaIndex])
+        console.log('country', countryBounds, countryName)
         setCountryBounds(countryBounds)
       }))
       .catch((error) => {
@@ -53,6 +51,7 @@ const useSite = (country) => {
 
   const setRandomSite = () => {
     setSite()
+    setCountryName(getCountryName())
     setSiteCountryBounds()
   }
 
