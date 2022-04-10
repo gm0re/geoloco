@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Button, Typography } from 'antd'
+import { Button, Tag, Typography } from 'antd'
 import countries from '../../constants/countries/index.json'
 
 const { Title } = Typography
+const { CheckableTag } = Tag
 
 const ContentWrapper = styled.div`
   display: flex;
@@ -13,10 +14,6 @@ const ContentWrapper = styled.div`
 `
 
 const CountriesWrapper = styled.div`
-`
-
-const CountryButton = styled(Button)`
-  margin: 4px;
 `
 
 const PlayButtonWrapper = styled.div`
@@ -39,31 +36,50 @@ const GeoLocoTitle = () => (
   <Title>GeoLoco 🌎</Title>
 )
 
-const Home = () => (
-  <ContentWrapper>
-    <GeoLocoTitle />
-    <MenuWrapper>
-      <PlayButtonWrapper>
-        <Button
-          size="large"
-          href="/geoloco"
-        >
-          Play all countries!
-        </Button>
-      </PlayButtonWrapper>
-      <Title level={3}> - OR - </Title>
-      <CountriesWrapper>
-        {countries.map((country) => (
-          <CountryButton
-            size="middle"
-            href={`/geoloco?country=${country}`}
+const Home = () => {
+  const [selectedCountries, setSelectedCountries] = useState([])
+
+  const onCountrySelect = (country) => {
+    if (selectedCountries.indexOf(country) === -1) {
+      setSelectedCountries([
+        ...selectedCountries,
+        country
+      ])
+    } else {
+      setSelectedCountries(selectedCountries.filter(
+        (selectedCountry) => selectedCountry !== country
+      ))
+    }
+  }
+
+  return (
+    <ContentWrapper>
+      <GeoLocoTitle />
+      <MenuWrapper>
+        <PlayButtonWrapper>
+          <Button
+            size="large"
+            href="/geoloco"
           >
-            {country.toUpperCase()}
-          </CountryButton>
-        ))}
-      </CountriesWrapper>
-    </MenuWrapper>
-  </ContentWrapper>
-)
+            Play all countries!
+          </Button>
+        </PlayButtonWrapper>
+        <Title level={3}> - OR - </Title>
+        <CountriesWrapper>
+          {countries.map((country) => (
+            <CheckableTag
+              key={country}
+              checked={selectedCountries.indexOf(country) > -1}
+              onChange={() => onCountrySelect(country)}
+            >
+              {country.toUpperCase()}
+            </CheckableTag>
+          ))}
+        </CountriesWrapper>
+        <Button href={`/geoloco?countries=${selectedCountries.join(',')}`}>Play!</Button>
+      </MenuWrapper>
+    </ContentWrapper>
+  )
+}
 
 export default Home
