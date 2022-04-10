@@ -51,7 +51,7 @@ const useSite = (country) => {
 
   const setRandomSite = () => {
     setSite()
-    setCountryName(getCountryName())
+    setCountryName(getCountryName(country))
     setSiteCountryBounds()
   }
 
